@@ -34,10 +34,16 @@ func (s *Source) SaveToFile(filename string) error {
 		templateData.MethodList = append(templateData.MethodList, "service_"+k[1:])
 	}
 
+	if err := CreateBasePath(filename); err != nil {
+		log.Fatalf("creating base for %s: %s", filename, err)
+	}
+
 	f, err := os.Create(filename)
 	if err != nil {
 		log.Fatalf("create file: %s", err)
 	}
+
+	defer f.Close()
 
 	err = s.tmpl.Execute(f, templateData)
 	if err != nil {
