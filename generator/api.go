@@ -9,10 +9,18 @@ import (
 
 type (
 	Api struct {
-		Filename    string
-		ServiceName string
-		MethodList  []string
-		Definitions []Definition
+		Filename            string
+		ServiceName         string
+		FriendlyServiceName string
+		Paths               []ApiPath
+		Definitions         []Definition
+	}
+
+	ApiPath struct {
+		MethodType         string
+		PathWithParameters string
+		ServiceMethod      string
+		CodeFilename       string
 	}
 
 	Definition struct {
@@ -56,15 +64,36 @@ func (api *Api) parser(text []byte) error {
 	}
 
 	api.ServiceName = "myservice"
+	api.FriendlyServiceName = swagger.Info.Title
 
-	// Fill method list.
-	for k := range swagger.Paths {
-		api.MethodList = append(api.MethodList, "service_"+k[1:])
-	}
+	api.Paths = api.fillPaths(swagger.Paths)
 
 	api.Definitions = api.fillDefinitions(swagger.Definitions)
 
 	return nil
+}
+
+// Fill paths.
+func (api *Api) fillPaths(pathDefinitions map[string]*Path) []ApiPath {
+	var paths []ApiPath
+	for k, v := range pathDefinitions {
+		var methodType = "UNDEFINED_METHOD_TYPE"
+		var serviceMethod = "UNDEFINED_SERVICE_METHOD"
+		if v.Get != nil {
+			methodType = "Get"
+			serviceMethod = v.Get.OperationID
+		}
+		path := ApiPath{
+			MethodType:         methodType,
+			PathWithParameters: k,
+			ServiceMethod:      strings.Title(serviceMethod),
+			CodeFilename:       "service_" + k[1:],
+		}
+		paths = append(paths, path)
+	}
+
+	return paths
+
 }
 
 // Fill definitions.
