@@ -1,8 +1,8 @@
 package {{.ServiceName}}_common
 
-import (
-	"time"
-)
+//import (
+//	"time"
+//)
 
 {{ range $definition := .Definitions }}
 type {{$definition.Name}} struct {
