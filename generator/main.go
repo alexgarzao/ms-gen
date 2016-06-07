@@ -42,5 +42,10 @@ func main() {
 		log.Fatalf("Error when saving main.go: %s", err)
 	}
 
+	source = NewSource(api, "../service_templates/SERVICE_NAME_server/service.go.tpl")
+	if err := source.SaveToFile("./code/{{.ServiceName}}_server/service.go"); err != nil {
+		log.Fatalf("Error when saving service.go: %s", err)
+	}
+
 	log.Printf("Finishing ms-gen...\n")
 }
