@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/alexgarzao/ms-gen/code/{{.ServiceName}}_common"
+	_ "github.com/alexgarzao/ms-gen/generator/code/{{.ServiceName}}_common"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
