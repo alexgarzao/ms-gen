@@ -14,6 +14,7 @@ type (
 		FriendlyServiceName string
 		Paths               []ApiPath
 		Definitions         []Definition
+		CurrentPath         ApiPath
 	}
 
 	ApiPath struct {
@@ -87,7 +88,7 @@ func (api *Api) fillPaths(pathDefinitions map[string]*Path) []ApiPath {
 			MethodType:         methodType,
 			PathWithParameters: k,
 			ServiceMethod:      strings.Title(serviceMethod),
-			CodeFilename:       "service_" + k[1:],
+			CodeFilename:       "service_" + k[1:] + ".go",
 		}
 		paths = append(paths, path)
 	}

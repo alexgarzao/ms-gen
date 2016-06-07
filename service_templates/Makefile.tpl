@@ -8,7 +8,7 @@ GOBUILD=go build -v
 GOFILES=\
 	{{$service_name}}_server/main.go\
 	{{$service_name}}_server/service.go\
-	{{ range $value := .Paths }}{{$service_name}}_server/{{$value.CodeFilename}}.go\
+	{{ range $value := .Paths }}{{$service_name}}_server/{{$value.CodeFilename}}\
 	{{ end }}{{$service_name}}_server/db.go\
 	{{$service_name}}_server/db_models.go
 
