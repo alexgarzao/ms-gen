@@ -20,6 +20,7 @@ paths:
     get:
       description: |
         GET method, without parameter, and returning one value.
+      operationId: getMethod1
       responses:
         200:
           description: Successful response
