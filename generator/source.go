@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"log"
 	"os"
 	"text/template"
@@ -20,7 +21,7 @@ func NewSource(api *Api, templateFilename string) *Source {
 	return source
 }
 
-func (s *Source) SaveToFile(filename string) error {
+func (s *Source) SaveToFile(templateFilename string) error {
 	type TemplateData struct {
 		ServiceName string
 		MethodList  []string
@@ -33,6 +34,14 @@ func (s *Source) SaveToFile(filename string) error {
 	for k := range s.api.swagger.Paths {
 		templateData.MethodList = append(templateData.MethodList, "service_"+k[1:])
 	}
+
+	// Replace tokens in filename.
+	t := template.Must(template.New("template_filename").Parse(templateFilename))
+
+	buffFilename := bytes.NewBufferString("")
+	t.Execute(buffFilename, templateData)
+
+	filename := buffFilename.String()
 
 	if err := CreateBasePath(filename); err != nil {
 		log.Fatalf("creating base for %s: %s", filename, err)
