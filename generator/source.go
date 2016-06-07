@@ -2,35 +2,17 @@ package main
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"log"
 	"os"
-	"strings"
 	"text/template"
 )
 
 type Source struct {
-	tmpl *template.Template
 	api  *Api
+	tmpl *template.Template
 }
-
-type (
-	TemplateData struct {
-		ServiceName string
-		MethodList  []string
-		Definitions []Definition
-	}
-
-	Definition struct {
-		Name       string
-		Properties []Property
-	}
-
-	Property struct {
-		Name     string
-		Type     string
-		JsonName string
-	}
-)
 
 func NewSource(api *Api, templateFilename string) *Source {
 	source := new(Source)
@@ -43,61 +25,31 @@ func NewSource(api *Api, templateFilename string) *Source {
 
 func (s *Source) SaveToFile(templateFilename string) error {
 
-	templateData := TemplateData{
-		ServiceName: "myservice",
-	}
-
-	// Fill method list.
-	for k := range s.api.swagger.Paths {
-		templateData.MethodList = append(templateData.MethodList, "service_"+k[1:])
-	}
-
-	templateData.Definitions = s.fillDefinitions(s.api.swagger.Definitions)
-
 	// Replace tokens in filename.
 	t := template.Must(template.New("template_filename").Parse(templateFilename))
 
 	buffFilename := bytes.NewBufferString("")
-	t.Execute(buffFilename, templateData)
+	t.Execute(buffFilename, s.api)
 
 	filename := buffFilename.String()
 
+	log.Printf("Generating %s...", filename)
+
 	if err := CreateBasePath(filename); err != nil {
-		log.Fatalf("creating base for %s: %s", filename, err)
+		return errors.New(fmt.Sprintf("creating base for %s: %s", filename, err))
 	}
 
 	f, err := os.Create(filename)
 	if err != nil {
-		log.Fatalf("create file: %s", err)
+		return errors.New(fmt.Sprintf("create file: %s", err))
 	}
 
 	defer f.Close()
 
-	err = s.tmpl.Execute(f, templateData)
+	err = s.tmpl.Execute(f, s.api)
 	if err != nil {
-		log.Fatalf("template execution: %s", err)
+		return errors.New(fmt.Sprintf("template execution: %s", err))
 	}
 
 	return nil
-}
-
-// Fill definitions.
-func (s *Source) fillDefinitions(apiDefinitions map[string]*JSONSchema) []Definition {
-	var definitions []Definition
-
-	for apiDefinitionKey, apiDefinitionValue := range apiDefinitions {
-		definition := Definition{}
-		definition.Name = apiDefinitionKey
-		for propertyKey, propertyValue := range apiDefinitionValue.Properties {
-			property := Property{
-				Name:     strings.Title(propertyKey),
-				Type:     string(propertyValue.Type),
-				JsonName: propertyKey,
-			}
-			definition.Properties = append(definition.Properties, property)
-		}
-		definitions = append(definitions, definition)
-	}
-
-	return definitions
 }
