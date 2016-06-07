@@ -15,5 +15,8 @@ func main() {
 	source = NewSource(api, "../service_templates/SERVICE_NAME_common/definitions.go.tpl")
 	source.SaveToFile("./code/{{.ServiceName}}_common/definitions.go")
 
+	source = NewSource(api, "../service_templates/SERVICE_NAME_common/requests.go.tpl")
+	source.SaveToFile("./code/{{.ServiceName}}_common/requests.go")
+
 	fmt.Printf("Finishing ms-gen...\n")
 }
