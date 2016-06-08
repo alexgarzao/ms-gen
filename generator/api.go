@@ -110,20 +110,22 @@ func (api *Api) fillPaths(pathDefinitions map[string]*Path) []ApiPath {
 		var methodType = "UNDEFINED_METHOD_TYPE"
 		var serviceMethod = "UNDEFINED_SERVICE_METHOD"
 		var operation *Operation
-		if v.Get != nil {
+		switch {
+		case v.Get != nil:
 			methodType = "Get"
 			operation = v.Get
+		case v.Post != nil:
+			methodType = "Post"
+			operation = v.Post
 		}
 
 		serviceMethod = operation.OperationID
-
-		pathWithoutParameter := GetPathWithoutParameter(k)
 
 		path := ApiPath{
 			MethodType:         methodType,
 			PathWithParameters: k,
 			ServiceMethod:      strings.Title(serviceMethod),
-			CodeFilename:       "service_" + pathWithoutParameter[1:] + ".go",
+			CodeFilename:       "service_" + CamelToSnake(operation.OperationID) + ".go",
 		}
 
 		path.Parameters = api.fillPathParameters(operation.Parameters)

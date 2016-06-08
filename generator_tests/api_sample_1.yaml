@@ -7,7 +7,7 @@ info:
   version: "0.0.1"
   title: ms-gen sample
   description: |
-    GET method, without parameter, and returning one value.
+    Tests to ms_gen.
 ############################################################
 
 ############################################################
@@ -138,6 +138,23 @@ paths:
         - in: query
           name: queryPar
           type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/GenericResponseWithSomeFields"
+        400:
+          description: Invalid parameter
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  ##########################################################
+  /path_2:
+  ##########################################################
+    post:
+      description: |
+        POST method, and can return 200 or 400.
+      operationId: path2Post1
       responses:
         200:
           description: Successful response
