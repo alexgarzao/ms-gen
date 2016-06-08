@@ -19,10 +19,10 @@ func (s *Service) {{.CurrentPath.ServiceMethod}}(w rest.ResponseWriter, r *rest.
 	{{ range $parameter := .CurrentPath.Parameters }}
 		{{if eq $parameter.In "query"}}
 			{{if eq $gen_param_values "false"}}
+			// Getting query parameters.
 			// paramValues := r.URL.Query()
 			{{$gen_param_values := "true"}}
 			{{end}}
-		// Get query parameter.
 		// {{$parameter.Name}} := paramValues.Get("{{$parameter.Name}}")
 		{{end}}
 	{{ end }}

@@ -88,6 +88,26 @@ paths:
           schema:
             $ref: "#/definitions/GetMethod5Response"
 
+  ##########################################################
+  /get_method_6:
+  ##########################################################
+    get:
+      description: |
+        GET method, two parameters in query, and returning some values.
+      operationId: getMethod6
+      parameters:
+        - in: query
+          name: queryPar1
+          type: string
+        - in: query
+          name: queryPar2
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/GetMethod6Response"
+
 
 ############################################################
 definitions:
@@ -143,6 +163,24 @@ definitions:
 
   ############################################################
   GetMethod5Response:
+  ############################################################
+    type: object
+    properties:
+      fieldName1:
+        type: string
+        description: Field 1.
+      fieldName2:
+        type: number
+        description: Field 2.
+      fieldName3:
+        type: integer
+        description: Field 3.
+      fieldName4:
+        type: boolean
+        description: Field 4.
+
+  ############################################################
+  GetMethod6Response:
   ############################################################
     type: object
     properties:
