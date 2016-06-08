@@ -100,3 +100,18 @@ func GetPathWithoutParameter(path string) string {
 
 	return result
 }
+
+func CamelToSnake(text string) string {
+	result := ""
+
+	for _, chr := range text {
+		if chr >= 'A' && chr <= 'Z' && result != "" {
+			result += "_"
+			result += string(chr + ('a' - 'A'))
+		} else {
+			result += string(chr)
+		}
+	}
+
+	return result
+}
