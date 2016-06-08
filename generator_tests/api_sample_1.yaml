@@ -127,6 +127,27 @@ paths:
         400:
           description: Invalid parameter
 
+  ##########################################################
+  /get_method_8:
+  ##########################################################
+    get:
+      description: |
+        GET method, one parameter in query, and can return 200 or 400 with error information.
+      operationId: getMethod8
+      parameters:
+        - in: query
+          name: queryPar
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/GenericResponseWithSomeFields"
+        400:
+          description: Invalid parameter
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
 
 ############################################################
 definitions:
@@ -233,3 +254,16 @@ definitions:
       fieldName4:
         type: boolean
         description: Field 4.
+  
+  ##########################################################
+  ErrorResponse:
+  ##########################################################
+    type: object
+    required:
+      - errorCode
+      - errorMessage
+    properties:
+      errorCode:
+        type: string
+      errorMessage:
+        type: string

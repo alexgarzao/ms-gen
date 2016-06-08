@@ -36,7 +36,8 @@ func (s *Service) {{.CurrentPath.ServiceMethod}}(w rest.ResponseWriter, r *rest.
 	// Business rules here :-)
 
 	{{ range $response := .CurrentPath.Responses }}
-	w.WriteJson({{$response.Name}})
+		{{if ne $response.Name ""}}
+			w.WriteJson({{$response.Name}})
+		{{end}}
 	{{ end }}
-	
 }
