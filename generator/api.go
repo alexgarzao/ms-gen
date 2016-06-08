@@ -24,6 +24,7 @@ type (
 		PathWithParameters string
 		ServiceMethod      string
 		CodeFilename       string
+		Parameter          ApiParameter
 		Responses          []ApiResponse
 	}
 
@@ -36,6 +37,15 @@ type (
 		Name     string
 		Type     string
 		JsonName string
+	}
+
+	ApiParameter struct {
+		Name        string
+		In          string
+		Description string
+		Required    bool
+		Type        string
+		Format      string
 	}
 
 	ApiResponse struct {
@@ -107,11 +117,27 @@ func (api *Api) fillPaths(pathDefinitions map[string]*Path) []ApiPath {
 
 		serviceMethod = operation.OperationID
 
+		pathWithoutParameter := GetPathWithoutParameter(k)
+
 		path := ApiPath{
 			MethodType:         methodType,
 			PathWithParameters: k,
 			ServiceMethod:      strings.Title(serviceMethod),
-			CodeFilename:       "service_" + k[1:] + ".go",
+			CodeFilename:       "service_" + pathWithoutParameter[1:] + ".go",
+		}
+
+		if len(operation.Parameters) > 0 {
+			swaggerParameter := operation.Parameters[0]
+			parameter := ApiParameter{
+				Name:        swaggerParameter.Name,
+				In:          swaggerParameter.In,
+				Description: swaggerParameter.Description,
+				Required:    swaggerParameter.Required,
+				Type:        swaggerParameter.Type,
+				Format:      swaggerParameter.Format,
+			}
+
+			path.Parameter = parameter
 		}
 
 		path.Responses = api.fillResponses(operation.Responses)
