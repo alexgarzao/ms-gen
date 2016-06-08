@@ -28,7 +28,9 @@ func (s *Service) {{.CurrentPath.ServiceMethod}}(w rest.ResponseWriter, r *rest.
 	{{ end }}
 
 	{{ range $response := .CurrentPath.Responses }}
-	{{$response.Name}} := {{$response.Type}}{}
+		{{if ne $response.Name ""}}
+			{{$response.Name}} := {{$response.Type}}{}
+		{{end}}
 	{{ end }}
 	
 	// Business rules here :-)

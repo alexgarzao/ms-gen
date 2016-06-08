@@ -108,6 +108,25 @@ paths:
           schema:
             $ref: "#/definitions/GetMethod6Response"
 
+  ##########################################################
+  /get_method_7:
+  ##########################################################
+    get:
+      description: |
+        GET method, one parameter in query, and can return 200 or 400.
+      operationId: getMethod7
+      parameters:
+        - in: query
+          name: queryPar
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/GenericResponseWithSomeFields"
+        400:
+          description: Invalid parameter
+
 
 ############################################################
 definitions:
@@ -197,3 +216,20 @@ definitions:
         type: boolean
         description: Field 4.
 
+  ############################################################
+  GenericResponseWithSomeFields:
+  ############################################################
+    type: object
+    properties:
+      fieldName1:
+        type: string
+        description: Field 1.
+      fieldName2:
+        type: number
+        description: Field 2.
+      fieldName3:
+        type: integer
+        description: Field 3.
+      fieldName4:
+        type: boolean
+        description: Field 4.

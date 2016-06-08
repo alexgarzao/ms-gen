@@ -183,12 +183,15 @@ func (api *Api) fillResponses(apiResponses map[string]*Response) []ApiResponse {
 	for apiResponseKey, apiResponseValue := range apiResponses {
 		response := ApiResponse{}
 		response.ResultCode = apiResponseKey
-		completeRef := apiResponseValue.Schema.Ref // "#/definitions/GetMethod1Response"
-		response.Ref = completeRef[strings.LastIndex(completeRef, "/")+1:]
 
-		// Help fields.
-		response.Name = strings.ToLower(string(response.Ref[0])) + response.Ref[1:]
-		response.Type = api.ServiceName + "_common." + response.Ref
+		if apiResponseValue.Schema != nil {
+			completeRef := apiResponseValue.Schema.Ref // "#/definitions/GetMethod1Response"
+			response.Ref = completeRef[strings.LastIndex(completeRef, "/")+1:]
+
+			// Help fields.
+			response.Name = strings.ToLower(string(response.Ref[0])) + response.Ref[1:]
+			response.Type = api.ServiceName + "_common." + response.Ref
+		}
 		responses = append(responses, response)
 	}
 
