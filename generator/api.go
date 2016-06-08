@@ -24,6 +24,7 @@ type (
 		PathWithParameters string
 		ServiceMethod      string
 		CodeFilename       string
+		Responses          []ApiResponse
 	}
 
 	Definition struct {
@@ -35,6 +36,14 @@ type (
 		Name     string
 		Type     string
 		JsonName string
+	}
+
+	ApiResponse struct {
+		ResultCode  string
+		Description string
+		Ref         string
+		Name        string
+		Type        string
 	}
 )
 
@@ -90,21 +99,27 @@ func (api *Api) fillPaths(pathDefinitions map[string]*Path) []ApiPath {
 	for k, v := range pathDefinitions {
 		var methodType = "UNDEFINED_METHOD_TYPE"
 		var serviceMethod = "UNDEFINED_SERVICE_METHOD"
+		var operation *Operation
 		if v.Get != nil {
 			methodType = "Get"
-			serviceMethod = v.Get.OperationID
+			operation = v.Get
 		}
+
+		serviceMethod = operation.OperationID
+
 		path := ApiPath{
 			MethodType:         methodType,
 			PathWithParameters: k,
 			ServiceMethod:      strings.Title(serviceMethod),
 			CodeFilename:       "service_" + k[1:] + ".go",
 		}
+
+		path.Responses = api.fillResponses(operation.Responses)
+
 		paths = append(paths, path)
 	}
 
 	return paths
-
 }
 
 // Fill definitions.
@@ -126,4 +141,23 @@ func (api *Api) fillDefinitions(apiDefinitions map[string]*JSONSchema) []Definit
 	}
 
 	return definitions
+}
+
+// Fill responses.
+func (api *Api) fillResponses(apiResponses map[string]*Response) []ApiResponse {
+	var responses []ApiResponse
+
+	for apiResponseKey, apiResponseValue := range apiResponses {
+		response := ApiResponse{}
+		response.ResultCode = apiResponseKey
+		completeRef := apiResponseValue.Schema.Ref // "#/definitions/GetMethod1Response"
+		response.Ref = completeRef[strings.LastIndex(completeRef, "/")+1:]
+
+		// Help fields.
+		response.Name = strings.ToLower(string(response.Ref[0])) + response.Ref[1:]
+		response.Type = api.ServiceName + "_common." + response.Ref
+		responses = append(responses, response)
+	}
+
+	return responses
 }
