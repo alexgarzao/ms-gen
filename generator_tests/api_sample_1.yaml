@@ -53,7 +53,6 @@ paths:
           schema:
             $ref: "#/definitions/GetMethod3Response"
 
-
   ##########################################################
   /get_method_4/{par1}:
   ##########################################################
@@ -71,6 +70,23 @@ paths:
           description: Successful response
           schema:
             $ref: "#/definitions/GetMethod4Response"
+
+  ##########################################################
+  /get_method_5:
+  ##########################################################
+    get:
+      description: |
+        GET method, one parameter in query, and returning some values.
+      operationId: getMethod5
+      parameters:
+        - in: query
+          name: queryPar1
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/GetMethod5Response"
 
 
 ############################################################
@@ -124,3 +140,22 @@ definitions:
       fieldName1:
         type: string
         description: Field 1.
+
+  ############################################################
+  GetMethod5Response:
+  ############################################################
+    type: object
+    properties:
+      fieldName1:
+        type: string
+        description: Field 1.
+      fieldName2:
+        type: number
+        description: Field 2.
+      fieldName3:
+        type: integer
+        description: Field 3.
+      fieldName4:
+        type: boolean
+        description: Field 4.
+
