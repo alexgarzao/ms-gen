@@ -24,7 +24,7 @@ type (
 		PathWithParameters string
 		ServiceMethod      string
 		CodeFilename       string
-		Parameter          ApiParameter
+		Parameters         []ApiParameter
 		Responses          []ApiResponse
 	}
 
@@ -126,26 +126,33 @@ func (api *Api) fillPaths(pathDefinitions map[string]*Path) []ApiPath {
 			CodeFilename:       "service_" + pathWithoutParameter[1:] + ".go",
 		}
 
-		if len(operation.Parameters) > 0 {
-			swaggerParameter := operation.Parameters[0]
-			parameter := ApiParameter{
-				Name:        swaggerParameter.Name,
-				In:          swaggerParameter.In,
-				Description: swaggerParameter.Description,
-				Required:    swaggerParameter.Required,
-				Type:        swaggerParameter.Type,
-				Format:      swaggerParameter.Format,
-			}
-
-			path.Parameter = parameter
-		}
-
+		path.Parameters = api.fillPathParameters(operation.Parameters)
 		path.Responses = api.fillResponses(operation.Responses)
 
 		paths = append(paths, path)
 	}
 
 	return paths
+}
+
+// Fill path parameters.
+func (api *Api) fillPathParameters(swgParameters []*Parameter) []ApiParameter {
+	var parameters []ApiParameter
+
+	for _, swgParameter := range swgParameters {
+		parameter := ApiParameter{
+			Name:        swgParameter.Name,
+			In:          swgParameter.In,
+			Description: swgParameter.Description,
+			Required:    swgParameter.Required,
+			Type:        swgParameter.Type,
+			Format:      swgParameter.Format,
+		}
+
+		parameters = append(parameters, parameter)
+	}
+
+	return parameters
 }
 
 // Fill definitions.
