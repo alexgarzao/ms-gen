@@ -40,6 +40,19 @@ paths:
           schema:
             $ref: "#/definitions/GetMethod2Response"
 
+  ############################################################
+  /get_method_3:
+  ############################################################
+    get:
+      description: |
+        GET method, without parameter, and returning three values.
+      operationId: getMethod3
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/GetMethod3Response"
+
 ############################################################
 definitions:
 ############################################################
@@ -64,3 +77,21 @@ definitions:
       fieldName2:
         type: string
         description: Field 2.
+
+  ############################################################
+  GetMethod3Response:
+  ############################################################
+    type: object
+    properties:
+      fieldName1:
+        type: string
+        description: Field 1.
+      fieldName2:
+        type: number
+        description: Field 2.
+      fieldName3:
+        type: integer
+        description: Field 3.
+      fieldName4:
+        type: boolean
+        description: Field 4.
