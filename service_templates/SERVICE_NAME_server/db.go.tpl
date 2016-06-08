@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/alexgarzao/ms-gen/generator/code/{{.ServiceName}}_common"
+	_ "{{.CommonImportPath}}"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"

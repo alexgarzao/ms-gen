@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/alexgarzao/ms-gen/generator/code/{{.ServiceName}}_common"
+	"{{.CommonImportPath}}"
 
 	"github.com/ant0ine/go-json-rest/rest"
 )
