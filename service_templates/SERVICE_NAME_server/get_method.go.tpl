@@ -7,11 +7,14 @@ import (
 )
 
 func (s *Service) {{.CurrentPath.ServiceMethod}}(w rest.ResponseWriter, r *rest.Request) {
-//	par := r.PathParam("{{/*.ParameterName*/}}")
-
-	response := {{.ServiceName}}_common.{{.CurrentPath.ServiceMethod}}Response{}
+	{{ range $response := .CurrentPath.Responses }}
+	{{$response.Name}} := {{$response.Type}}{}
+	{{ end }}
 	
 	// Business rules here :-)
 
-	w.WriteJson(response)
+	{{ range $response := .CurrentPath.Responses }}
+	w.WriteJson({{$response.Name}})
+	{{ end }}
+	
 }
