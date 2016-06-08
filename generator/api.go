@@ -10,8 +10,10 @@ import (
 type (
 	Api struct {
 		Filename            string
+		OutputDir           string
 		ServiceName         string
 		FriendlyServiceName string
+		CommonImportPath    string
 		Paths               []ApiPath
 		Definitions         []Definition
 		CurrentPath         ApiPath
@@ -36,9 +38,10 @@ type (
 	}
 )
 
-func NewApi(filename string) (api *Api) {
+func NewApi(filename string, outputDir string) (api *Api) {
 	api = new(Api)
 	api.Filename = filename
+	api.OutputDir = outputDir
 
 	return api
 }
@@ -70,6 +73,13 @@ func (api *Api) parser(text []byte) error {
 	api.Paths = api.fillPaths(swagger.Paths)
 
 	api.Definitions = api.fillDefinitions(swagger.Definitions)
+
+	commonImportPath, err := GetCommonImportPath(api.OutputDir, api.ServiceName)
+	if err != nil {
+		return err
+	}
+
+	api.CommonImportPath = commonImportPath
 
 	return nil
 }
