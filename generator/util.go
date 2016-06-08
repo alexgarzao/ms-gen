@@ -45,3 +45,44 @@ func GetCommonImportPath(outputDir string, serviceName string) (string, error) {
 
 	return commonImportPath, nil
 }
+
+// Conversion based on this table: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types
+//
+//	Common Name		type			format		Comments
+//	-------------------------------------------------
+//	integer			integer		int32		signed 32 bits
+//	long				integer		int64		signed 64 bits
+//	float			number		float
+//	double			number		double
+//	string			string
+//	byte				string		byte			base64 encoded characters
+//	binary			string		binary		any sequence of octets
+//	boolean			boolean
+//	date				string		date			As defined by full-date - RFC3339
+//	dateTime			string		date-time	As defined by date-time - RFC3339
+//	password			string		password		Used to hint UIs the input needs to be obscured.
+//
+func ToGolangType(swaggerType string, swaggerFormat string) string {
+	goType := map[string]string{
+		"integer|int32":    "int32",
+		"integer|int64":    "int64",
+		"integer|":         "int64",
+		"number|float":     "float32",
+		"number|double":    "float64",
+		"number|":          "float64",
+		"string|":          "string",
+		"string|byte":      "undefined",
+		"string|binary":    "undefined",
+		"boolean|":         "bool",
+		"string|date":      "time.Time",
+		"string|date-time": "time.Time",
+		"string|password":  "undefined",
+	}
+
+	result, ok := goType[swaggerType+"|"+swaggerFormat]
+	if ok == false {
+		result = "error"
+	}
+
+	return result
+}
