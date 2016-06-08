@@ -86,3 +86,17 @@ func ToGolangType(swaggerType string, swaggerFormat string) string {
 
 	return result
 }
+
+func GetPathWithoutParameter(path string) string {
+	// Input example: "/get_method_4/{par1}"
+	// Result: "/get_method_4"
+
+	n := strings.Index(path, "/{")
+	if n == -1 {
+		return path
+	}
+
+	result := path[:n]
+
+	return result
+}
