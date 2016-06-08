@@ -53,5 +53,10 @@ func main() {
 		log.Fatalf("Error when saving %s: %s", api.CurrentPath.CodeFilename, err)
 	}
 
+	source = NewSource(api, "../service_templates/SERVICE_NAME_server/SERVICE_NAME_config.yaml.example.tpl")
+	if err := source.SaveToFile("./code/{{.ServiceName}}_server/{{.ServiceName}}_config.yaml.example"); err != nil {
+		log.Fatalf("Error when saving SERVICE_NAME_config.yaml.example: %s", err)
+	}
+
 	log.Printf("Finishing ms-gen...\n")
 }
