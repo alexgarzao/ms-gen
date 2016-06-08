@@ -132,7 +132,7 @@ func (api *Api) fillDefinitions(apiDefinitions map[string]*JSONSchema) []Definit
 		for propertyKey, propertyValue := range apiDefinitionValue.Properties {
 			property := Property{
 				Name:     strings.Title(propertyKey),
-				Type:     string(propertyValue.Type),
+				Type:     ToGolangType(string(propertyValue.Type), ""),
 				JsonName: propertyKey,
 			}
 			definition.Properties = append(definition.Properties, property)
