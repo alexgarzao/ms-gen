@@ -50,9 +50,11 @@ func (s *Source) Build() error {
 		return errors.New(fmt.Sprintf("Error when saving service.go: %s", err))
 	}
 
-	s.api.CurrentPath = s.api.Paths[0]
-	if err := s.saveToFile("../service_templates/SERVICE_NAME_server/get_method.go.tpl", "{{.ServiceName}}_server/"+s.api.CurrentPath.CodeFilename); err != nil {
-		return errors.New(fmt.Sprintf("Error when saving %s: %s", s.api.CurrentPath.CodeFilename, err))
+	for _, path := range s.api.Paths {
+		s.api.CurrentPath = path
+		if err := s.saveToFile("../service_templates/SERVICE_NAME_server/get_method.go.tpl", "{{.ServiceName}}_server/"+path.CodeFilename); err != nil {
+			return errors.New(fmt.Sprintf("Error when saving %s: %s", path.CodeFilename, err))
+		}
 	}
 
 	if err := s.saveToFile("../service_templates/SERVICE_NAME_server/SERVICE_NAME_config.yaml.example.tpl", "{{.ServiceName}}_server/{{.ServiceName}}_config.yaml.example"); err != nil {

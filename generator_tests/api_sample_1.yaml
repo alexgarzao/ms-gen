@@ -27,6 +27,19 @@ paths:
           schema:
             $ref: "#/definitions/GetMethod1Response"
 
+  ############################################################
+  /get_method_2:
+  ############################################################
+    get:
+      description: |
+        GET method, without parameter, and returning two values.
+      operationId: getMethod2
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/GetMethod2Response"
+
 ############################################################
 definitions:
 ############################################################
@@ -39,3 +52,15 @@ definitions:
       fieldName1:
         type: string
         description: Field 1.
+
+  ############################################################
+  GetMethod2Response:
+  ############################################################
+    type: object
+    properties:
+      fieldName1:
+        type: string
+        description: Field 1.
+      fieldName2:
+        type: string
+        description: Field 2.
