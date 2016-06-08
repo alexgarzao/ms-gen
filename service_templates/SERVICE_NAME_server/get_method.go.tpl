@@ -7,10 +7,25 @@ import (
 )
 
 func (s *Service) {{.CurrentPath.ServiceMethod}}(w rest.ResponseWriter, r *rest.Request) {
-	{{if .CurrentPath.Parameter.Name}}
-	// Get path parameter.
-	// {{.CurrentPath.Parameter.Name}} := r.PathParam("{{.CurrentPath.Parameter.Name}}")
-	{{end}}
+	{{ range $parameter := .CurrentPath.Parameters }}
+		{{if eq $parameter.In "path"}}
+		// Get path parameter.
+		// {{$parameter.Name}} := r.PathParam("{{$parameter.Name}}")
+		{{end}}
+	{{ end }}
+
+	{{ $gen_param_values := "false" }}
+
+	{{ range $parameter := .CurrentPath.Parameters }}
+		{{if eq $parameter.In "query"}}
+			{{if eq $gen_param_values "false"}}
+			// paramValues := r.URL.Query()
+			{{$gen_param_values := "true"}}
+			{{end}}
+		// Get query parameter.
+		// {{$parameter.Name}} := paramValues.Get("{{$parameter.Name}}")
+		{{end}}
+	{{ end }}
 
 	{{ range $response := .CurrentPath.Responses }}
 	{{$response.Name}} := {{$response.Type}}{}
