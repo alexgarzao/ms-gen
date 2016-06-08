@@ -53,6 +53,26 @@ paths:
           schema:
             $ref: "#/definitions/GetMethod3Response"
 
+
+  ##########################################################
+  /get_method_4/{par1}:
+  ##########################################################
+    get:
+      description: |
+        GET method, one parameter, and returning one value.
+      operationId: getMethod4
+      parameters:
+        - in: path
+          name: par1
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/GetMethod4Response"
+
+
 ############################################################
 definitions:
 ############################################################
@@ -95,3 +115,12 @@ definitions:
       fieldName4:
         type: boolean
         description: Field 4.
+
+  ############################################################
+  GetMethod4Response:
+  ############################################################
+    type: object
+    properties:
+      fieldName1:
+        type: string
+        description: Field 1.
