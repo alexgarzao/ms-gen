@@ -25,15 +25,17 @@ func NewSource(api *Api, templateFilename string) *Source {
 
 func (s *Source) SaveToFile(templateFilename string) error {
 
+	baseSourceDir := s.api.OutputDir + "/"
+
 	// Replace tokens in filename.
 	t := template.Must(template.New("template_filename").Parse(templateFilename))
 
 	buffFilename := bytes.NewBufferString("")
 	t.Execute(buffFilename, s.api)
 
-	filename := buffFilename.String()
+	filename := baseSourceDir + buffFilename.String()
 
-	log.Printf("Generating %s...", filename)
+	log.Printf("Generating %s", filename)
 
 	if err := CreateBasePath(filename); err != nil {
 		return errors.New(fmt.Sprintf("creating base for %s: %s", filename, err))
