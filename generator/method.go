@@ -7,6 +7,7 @@ import (
 )
 
 type Method struct {
+	ServiceName        string
 	MethodType         string
 	PathWithParameters string
 	ServiceMethod      string
@@ -22,13 +23,14 @@ func NewMethod(serviceName string, pathWithParameters string, methodType string,
 	pathWithoutParameter := GetPathWithoutParameter(pathWithParameters)
 
 	method := &Method{
+		ServiceName:   serviceName,
 		MethodType:    methodType,
 		ServiceMethod: strings.Title(serviceMethod),
 		CodeFilename:  "service_" + CamelToSnake(operation.OperationID) + ".go",
 	}
 
-	method.Parameters = method.fillPathParameters(serviceName, operation.Parameters)
-	method.Responses = method.fillResponses(serviceName, operation.Responses)
+	method.Parameters = method.fillMethodParameters(operation.Parameters)
+	method.Responses = method.fillResponses(operation.Responses)
 
 	pathParamName := operation.GetFirstPathParamName()
 
@@ -48,23 +50,23 @@ func NewMethod(serviceName string, pathWithParameters string, methodType string,
 	return method
 }
 
-// Fill path parameters.
-func (method *Method) fillPathParameters(serviceName string, swgParameters []*swaggerparser.Parameter) []*Parameter {
+// Fill method parameters.
+func (method *Method) fillMethodParameters(swgParameters []*swaggerparser.Parameter) []*Parameter {
 	var parameters []*Parameter
 
 	for _, swgParameter := range swgParameters {
-		parameters = append(parameters, NewParameter(serviceName, swgParameter))
+		parameters = append(parameters, NewParameter(method.ServiceName, swgParameter))
 	}
 
 	return parameters
 }
 
 // Fill responses.
-func (method *Method) fillResponses(serviceName string, apiResponses map[string]*swaggerparser.Response) []*Response {
+func (method *Method) fillResponses(apiResponses map[string]*swaggerparser.Response) []*Response {
 	var responses []*Response
 
 	for apiResponseKey, apiResponseValue := range apiResponses {
-		responses = append(responses, NewResponse(serviceName, apiResponseKey, apiResponseValue))
+		responses = append(responses, NewResponse(method.ServiceName, apiResponseKey, apiResponseValue))
 	}
 
 	return responses
