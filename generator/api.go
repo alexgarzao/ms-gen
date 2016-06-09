@@ -8,23 +8,16 @@ import (
 	"github.com/alexgarzao/ms-gen/swaggerparser"
 )
 
-type (
-	Api struct {
-		Filename            string
-		OutputDir           string
-		ServiceName         string
-		FriendlyServiceName string
-		CommonImportPath    string
-		Methods             []*Method
-		Definitions         []Definition
-		CurrentMethod       *Method
-	}
-
-	Definition struct {
-		Name       string
-		Properties []*Property
-	}
-)
+type Api struct {
+	Filename            string
+	OutputDir           string
+	ServiceName         string
+	FriendlyServiceName string
+	CommonImportPath    string
+	Methods             []*Method
+	Definitions         []*Definition
+	CurrentMethod       *Method
+}
 
 func NewApi(filename string, outputDir string) (api *Api) {
 	api = new(Api)
@@ -60,7 +53,7 @@ func (api *Api) parser(text []byte) error {
 
 	api.Methods = api.fillMethods(swagger.Paths)
 
-	api.Definitions = api.fillDefinitions(swagger.Definitions)
+	api.Definitions = FillDefinitions(swagger.Definitions)
 
 	commonImportPath, err := GetCommonImportPath(api.OutputDir, api.ServiceName)
 	if err != nil {
@@ -90,21 +83,4 @@ func (api *Api) fillMethods(pathDefinitions map[string]*swaggerparser.Path) []*M
 	}
 
 	return methods
-}
-
-// Fill definitions.
-func (api *Api) fillDefinitions(apiDefinitions map[string]*swaggerparser.JSONSchema) []Definition {
-	var definitions []Definition
-
-	for apiDefinitionKey, apiDefinitionValue := range apiDefinitions {
-		definition := Definition{}
-		definition.Name = apiDefinitionKey
-		for propertyKey, propertyValue := range apiDefinitionValue.Properties {
-			property := NewProperty(propertyKey, propertyValue)
-			definition.Properties = append(definition.Properties, property)
-		}
-		definitions = append(definitions, definition)
-	}
-
-	return definitions
 }
