@@ -4,6 +4,26 @@ import (
 	"time"
 )
 
+type ServiceRequest1 struct {
+	FieldName1 string    `json:"fieldName1"`
+	FieldName2 string    `json:"fieldName2"`
+	FieldName3 time.Time `json:"fieldName3"`
+}
+
+//type ServiceRequest2 struct {
+//	FieldName1 string `json:"fieldName1"`
+//	FieldName2 string `json:"fieldName2"`
+//	FieldName3 time.Time `json:"fieldName3"`
+//}
+//
+//...
+//
+//type ServiceRequestN struct {
+//	FieldName1 string `json:"fieldName1"`
+//	FieldName2 string `json:"fieldName2"`
+//	FieldName3 time.Time `json:"fieldName3"`
+//}
+
 //type GET_METHOD_NAMERequest struct {
 //	FieldName1 string    `json:"fieldName1"`
 //	FieldName2 time.Time `json:"fieldName2"`
