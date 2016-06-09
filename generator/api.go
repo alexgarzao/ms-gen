@@ -4,7 +4,6 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"io/ioutil"
-	"strings"
 
 	"github.com/alexgarzao/ms-gen/swaggerparser"
 )
@@ -23,13 +22,7 @@ type (
 
 	Definition struct {
 		Name       string
-		Properties []Property
-	}
-
-	Property struct {
-		Name     string
-		Type     string
-		JsonName string
+		Properties []*Property
 	}
 )
 
@@ -107,11 +100,7 @@ func (api *Api) fillDefinitions(apiDefinitions map[string]*swaggerparser.JSONSch
 		definition := Definition{}
 		definition.Name = apiDefinitionKey
 		for propertyKey, propertyValue := range apiDefinitionValue.Properties {
-			property := Property{
-				Name:     strings.Title(propertyKey),
-				Type:     ToGolangType(string(propertyValue.Type), ""),
-				JsonName: propertyKey,
-			}
+			property := NewProperty(propertyKey, propertyValue)
 			definition.Properties = append(definition.Properties, property)
 		}
 		definitions = append(definitions, definition)
