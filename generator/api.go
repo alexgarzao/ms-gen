@@ -107,34 +107,42 @@ func (api *Api) parser(text []byte) error {
 func (api *Api) fillPaths(pathDefinitions map[string]*Path) []ApiPath {
 	var paths []ApiPath
 	for k, v := range pathDefinitions {
-		var methodType = "UNDEFINED_METHOD_TYPE"
-		var serviceMethod = "UNDEFINED_SERVICE_METHOD"
-		var operation *Operation
-		switch {
-		case v.Get != nil:
-			methodType = "Get"
-			operation = v.Get
-		case v.Post != nil:
-			methodType = "Post"
-			operation = v.Post
+		if v.Get != nil {
+			paths = append(paths, api.newMethod(k, "Get", v.Get))
 		}
 
-		serviceMethod = operation.OperationID
-
-		path := ApiPath{
-			MethodType:         methodType,
-			PathWithParameters: k,
-			ServiceMethod:      strings.Title(serviceMethod),
-			CodeFilename:       "service_" + CamelToSnake(operation.OperationID) + ".go",
+		if v.Post != nil {
+			paths = append(paths, api.newMethod(k, "Post", v.Post))
 		}
-
-		path.Parameters = api.fillPathParameters(operation.Parameters)
-		path.Responses = api.fillResponses(operation.Responses)
-
-		paths = append(paths, path)
 	}
 
 	return paths
+}
+
+func (api *Api) newMethod(pathWithParameters string, methodType string, operation *Operation) ApiPath {
+
+	serviceMethod := operation.OperationID
+	pathWithoutParameter := GetPathWithoutParameter(pathWithParameters)
+
+	path := ApiPath{
+		MethodType:    methodType,
+		ServiceMethod: strings.Title(serviceMethod),
+		CodeFilename:  "service_" + CamelToSnake(operation.OperationID) + ".go",
+	}
+
+	path.Parameters = api.fillPathParameters(operation.Parameters)
+	path.Responses = api.fillResponses(operation.Responses)
+
+	pathParamName := api.getPathParamName(operation.Parameters)
+
+	normalizedPath := pathWithoutParameter
+	if pathParamName != "" {
+		normalizedPath += "/:" + pathParamName
+	}
+
+	path.PathWithParameters = normalizedPath
+
+	return path
 }
 
 // Fill path parameters.
@@ -155,6 +163,17 @@ func (api *Api) fillPathParameters(swgParameters []*Parameter) []ApiParameter {
 	}
 
 	return parameters
+}
+
+// Get the first path parameter name.
+func (api *Api) getPathParamName(swgParameters []*Parameter) string {
+	for _, swgParameter := range swgParameters {
+		if swgParameter.In == "path" {
+			return swgParameter.Name
+		}
+	}
+
+	return ""
 }
 
 // Fill definitions.

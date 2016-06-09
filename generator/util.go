@@ -105,8 +105,10 @@ func CamelToSnake(text string) string {
 	result := ""
 
 	for _, chr := range text {
-		if chr >= 'A' && chr <= 'Z' && result != "" {
-			result += "_"
+		if chr >= 'A' && chr <= 'Z' {
+			if result != "" {
+				result += "_"
+			}
 			result += string(chr + ('a' - 'A'))
 		} else {
 			result += string(chr)
