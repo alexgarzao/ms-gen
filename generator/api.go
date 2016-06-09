@@ -32,15 +32,6 @@ type (
 		JsonName string
 	}
 
-	Parameter struct {
-		Name        string
-		In          string
-		Description string
-		Required    bool
-		Type        string
-		Format      string
-	}
-
 	Response struct {
 		ResultCode  string
 		Description string

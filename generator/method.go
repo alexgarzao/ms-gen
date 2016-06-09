@@ -11,7 +11,7 @@ type Method struct {
 	PathWithParameters string
 	ServiceMethod      string
 	CodeFilename       string
-	Parameters         []Parameter
+	Parameters         []*Parameter
 	Responses          []Response
 	Imports            []string
 }
@@ -49,27 +49,11 @@ func NewMethod(serviceName string, pathWithParameters string, methodType string,
 }
 
 // Fill path parameters.
-func (method *Method) fillPathParameters(serviceName string, swgParameters []*swaggerparser.Parameter) []Parameter {
-	var parameters []Parameter
+func (method *Method) fillPathParameters(serviceName string, swgParameters []*swaggerparser.Parameter) []*Parameter {
+	var parameters []*Parameter
 
 	for _, swgParameter := range swgParameters {
-		parameter := Parameter{
-			Name:        swgParameter.Name,
-			In:          swgParameter.In,
-			Description: swgParameter.Description,
-			Required:    swgParameter.Required,
-			Format:      swgParameter.Format,
-		}
-
-		if swgParameter.Schema != nil {
-			completeRef := swgParameter.Schema.Ref // "#/definitions/GetMethod1Response"
-			ref := completeRef[strings.LastIndex(completeRef, "/")+1:]
-			parameter.Type = serviceName + "_common." + ref
-		} else if swgParameter.Type != "" {
-			parameter.Type = serviceName + "_common." + swgParameter.Type
-		}
-
-		parameters = append(parameters, parameter)
+		parameters = append(parameters, NewParameter(serviceName, swgParameter))
 	}
 
 	return parameters
