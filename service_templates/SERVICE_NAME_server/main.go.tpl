@@ -20,7 +20,7 @@ func main() {
 	api := rest.NewApi()
 	api.Use(rest.DefaultDevStack...)
 	router, err := rest.MakeRouter(
-		{{ range $path := .Paths }}rest.{{$path.MethodType}}("{{$path.PathWithParameters}}", s.{{$path.ServiceMethod}}),
+		{{ range $method := .Methods }}rest.{{$method.MethodType}}("{{$method.PathWithParameters}}", s.{{$method.ServiceMethod}}),
 		{{ end }}
 	)
 

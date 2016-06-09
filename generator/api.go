@@ -16,19 +16,9 @@ type (
 		ServiceName         string
 		FriendlyServiceName string
 		CommonImportPath    string
-		Paths               []Path
+		Methods             []*Method
 		Definitions         []Definition
-		CurrentPath         Path
-	}
-
-	Path struct { // TODO: In really, its a method.
-		MethodType         string
-		PathWithParameters string
-		ServiceMethod      string
-		CodeFilename       string
-		Parameters         []Parameter
-		Responses          []Response
-		Imports            []string
+		CurrentMethod       *Method
 	}
 
 	Definition struct {
@@ -92,7 +82,7 @@ func (api *Api) parser(text []byte) error {
 	api.ServiceName = "myservice"
 	api.FriendlyServiceName = swagger.Info.Title
 
-	api.Paths = api.fillPaths(swagger.Paths)
+	api.Methods = api.fillMethods(swagger.Paths)
 
 	api.Definitions = api.fillDefinitions(swagger.Definitions)
 
@@ -106,105 +96,24 @@ func (api *Api) parser(text []byte) error {
 	return nil
 }
 
-// Fill paths.
-func (api *Api) fillPaths(pathDefinitions map[string]*swaggerparser.Path) []Path {
-	var paths []Path
+// Fill methods.
+func (api *Api) fillMethods(pathDefinitions map[string]*swaggerparser.Path) []*Method {
+	var methods []*Method
 	for k, v := range pathDefinitions {
 		if v.Get != nil {
-			paths = append(paths, api.newMethod(k, "Get", v.Get))
+			methods = append(methods, NewMethod(api.ServiceName, k, "Get", v.Get))
 		}
 
 		if v.Post != nil {
-			paths = append(paths, api.newMethod(k, "Post", v.Post))
+			methods = append(methods, NewMethod(api.ServiceName, k, "Post", v.Post))
 		}
 
 		if v.Put != nil {
-			paths = append(paths, api.newMethod(k, "Put", v.Put))
+			methods = append(methods, NewMethod(api.ServiceName, k, "Put", v.Put))
 		}
 	}
 
-	return paths
-}
-
-func (api *Api) newMethod(pathWithParameters string, methodType string, operation *swaggerparser.Operation) Path {
-
-	serviceMethod := operation.OperationID
-	pathWithoutParameter := GetPathWithoutParameter(pathWithParameters)
-
-	path := Path{
-		MethodType:    methodType,
-		ServiceMethod: strings.Title(serviceMethod),
-		CodeFilename:  "service_" + CamelToSnake(operation.OperationID) + ".go",
-	}
-
-	path.Parameters = api.fillPathParameters(operation.Parameters)
-	path.Responses = api.fillResponses(operation.Responses)
-
-	pathParamName := api.getPathParamName(operation.Parameters)
-
-	normalizedPath := pathWithoutParameter
-	if pathParamName != "" {
-		normalizedPath += "/:" + pathParamName
-	}
-
-	if api.getBodyParamName(operation.Parameters) != "" {
-		path.Imports = append(path.Imports, "fmt")
-		path.Imports = append(path.Imports, "net/http")
-
-	}
-
-	path.PathWithParameters = normalizedPath
-
-	return path
-}
-
-// Fill path parameters.
-func (api *Api) fillPathParameters(swgParameters []*swaggerparser.Parameter) []Parameter {
-	var parameters []Parameter
-
-	for _, swgParameter := range swgParameters {
-		parameter := Parameter{
-			Name:        swgParameter.Name,
-			In:          swgParameter.In,
-			Description: swgParameter.Description,
-			Required:    swgParameter.Required,
-			Format:      swgParameter.Format,
-		}
-
-		if swgParameter.Schema != nil {
-			completeRef := swgParameter.Schema.Ref // "#/definitions/GetMethod1Response"
-			ref := completeRef[strings.LastIndex(completeRef, "/")+1:]
-			parameter.Type = api.ServiceName + "_common." + ref
-		} else if swgParameter.Type != "" {
-			parameter.Type = api.ServiceName + "_common." + swgParameter.Type
-		}
-
-		parameters = append(parameters, parameter)
-	}
-
-	return parameters
-}
-
-// Get the first path parameter name.
-func (api *Api) getPathParamName(swgParameters []*swaggerparser.Parameter) string {
-	for _, swgParameter := range swgParameters {
-		if swgParameter.In == "path" {
-			return swgParameter.Name
-		}
-	}
-
-	return ""
-}
-
-// Get the first body parameter name.
-func (api *Api) getBodyParamName(swgParameters []*swaggerparser.Parameter) string {
-	for _, swgParameter := range swgParameters {
-		if swgParameter.In == "body" {
-			return swgParameter.Name
-		}
-	}
-
-	return ""
+	return methods
 }
 
 // Fill definitions.
@@ -226,26 +135,4 @@ func (api *Api) fillDefinitions(apiDefinitions map[string]*swaggerparser.JSONSch
 	}
 
 	return definitions
-}
-
-// Fill responses.
-func (api *Api) fillResponses(apiResponses map[string]*swaggerparser.Response) []Response {
-	var responses []Response
-
-	for apiResponseKey, apiResponseValue := range apiResponses {
-		response := Response{}
-		response.ResultCode = apiResponseKey
-
-		if apiResponseValue.Schema != nil {
-			completeRef := apiResponseValue.Schema.Ref // "#/definitions/GetMethod1Response"
-			response.Ref = completeRef[strings.LastIndex(completeRef, "/")+1:]
-
-			// Help fields.
-			response.Name = strings.ToLower(string(response.Ref[0])) + response.Ref[1:]
-			response.Type = api.ServiceName + "_common." + response.Ref
-		}
-		responses = append(responses, response)
-	}
-
-	return responses
 }
