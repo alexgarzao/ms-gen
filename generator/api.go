@@ -16,18 +16,18 @@ type (
 		ServiceName         string
 		FriendlyServiceName string
 		CommonImportPath    string
-		Paths               []ApiPath
+		Paths               []Path
 		Definitions         []Definition
-		CurrentPath         ApiPath
+		CurrentPath         Path
 	}
 
-	ApiPath struct { // TODO: In really, its a method.
+	Path struct { // TODO: In really, its a method.
 		MethodType         string
 		PathWithParameters string
 		ServiceMethod      string
 		CodeFilename       string
-		Parameters         []ApiParameter
-		Responses          []ApiResponse
+		Parameters         []Parameter
+		Responses          []Response
 		Imports            []string
 	}
 
@@ -42,7 +42,7 @@ type (
 		JsonName string
 	}
 
-	ApiParameter struct {
+	Parameter struct {
 		Name        string
 		In          string
 		Description string
@@ -51,7 +51,7 @@ type (
 		Format      string
 	}
 
-	ApiResponse struct {
+	Response struct {
 		ResultCode  string
 		Description string
 		Ref         string
@@ -107,8 +107,8 @@ func (api *Api) parser(text []byte) error {
 }
 
 // Fill paths.
-func (api *Api) fillPaths(pathDefinitions map[string]*swaggerparser.Path) []ApiPath {
-	var paths []ApiPath
+func (api *Api) fillPaths(pathDefinitions map[string]*swaggerparser.Path) []Path {
+	var paths []Path
 	for k, v := range pathDefinitions {
 		if v.Get != nil {
 			paths = append(paths, api.newMethod(k, "Get", v.Get))
@@ -126,12 +126,12 @@ func (api *Api) fillPaths(pathDefinitions map[string]*swaggerparser.Path) []ApiP
 	return paths
 }
 
-func (api *Api) newMethod(pathWithParameters string, methodType string, operation *swaggerparser.Operation) ApiPath {
+func (api *Api) newMethod(pathWithParameters string, methodType string, operation *swaggerparser.Operation) Path {
 
 	serviceMethod := operation.OperationID
 	pathWithoutParameter := GetPathWithoutParameter(pathWithParameters)
 
-	path := ApiPath{
+	path := Path{
 		MethodType:    methodType,
 		ServiceMethod: strings.Title(serviceMethod),
 		CodeFilename:  "service_" + CamelToSnake(operation.OperationID) + ".go",
@@ -159,11 +159,11 @@ func (api *Api) newMethod(pathWithParameters string, methodType string, operatio
 }
 
 // Fill path parameters.
-func (api *Api) fillPathParameters(swgParameters []*swaggerparser.Parameter) []ApiParameter {
-	var parameters []ApiParameter
+func (api *Api) fillPathParameters(swgParameters []*swaggerparser.Parameter) []Parameter {
+	var parameters []Parameter
 
 	for _, swgParameter := range swgParameters {
-		parameter := ApiParameter{
+		parameter := Parameter{
 			Name:        swgParameter.Name,
 			In:          swgParameter.In,
 			Description: swgParameter.Description,
@@ -229,11 +229,11 @@ func (api *Api) fillDefinitions(apiDefinitions map[string]*swaggerparser.JSONSch
 }
 
 // Fill responses.
-func (api *Api) fillResponses(apiResponses map[string]*swaggerparser.Response) []ApiResponse {
-	var responses []ApiResponse
+func (api *Api) fillResponses(apiResponses map[string]*swaggerparser.Response) []Response {
+	var responses []Response
 
 	for apiResponseKey, apiResponseValue := range apiResponses {
-		response := ApiResponse{}
+		response := Response{}
 		response.ResultCode = apiResponseKey
 
 		if apiResponseValue.Schema != nil {
