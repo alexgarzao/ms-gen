@@ -1,23 +1,36 @@
-.PHONY: build doc fmt lint run onlyrun test vet
+.PHONY: build_server build_bdd doc fmt lint run onlyrun test bdd vet
 {{ $service_name := .ServiceName }}
-EXECUTABLE={{$service_name}}-server
-LOG_FILE=/var/log/${EXECUTABLE}.log
+SERVER_EXECUTABLE={{$service_name}}-server
+BDD_EXECUTABLE={{$service_name}}-test
+
+LOG_FILE=/var/log/${SERVER_EXECUTABLE}.log
 GOFMT=gofmt -w
 GODEPS=go get
 GOBUILD=go build -v
-GOFILES=\
+
+GOSERVERFILES=\
 	{{$service_name}}_server/main.go\
 	{{$service_name}}_server/service.go\
+	{{$service_name}}_server/request_validation.go\
 	{{ range $value := .Methods }}{{$service_name}}_server/{{$value.CodeFilename}}\
 	{{ end }}{{$service_name}}_server/db.go\
 	{{$service_name}}_server/db_models.go
 
+GOTESTFILES=\
+	{{$service_name}}_test/tests.go\
+	{{$service_name}}_test/test_requests.go\
+	{{$service_name}}_test/test_behaviour_1.go
 
-default: build
+
+default: build_server
 
 
-build: vet
-	${GOBUILD} -o ./bin/${EXECUTABLE} ${GOFILES}
+build_server: vet
+	${GOBUILD} -o ./bin/${SERVER_EXECUTABLE} ${GOSERVERFILES}
+
+
+build_bdd:
+	${GOBUILD} -o ./bin/${BDD_EXECUTABLE} ${GOTESTFILES}
 
 
 doc:
@@ -25,23 +38,27 @@ doc:
 
 
 fmt:
-	${GOFMT} ${GOFILES}
+	${GOFMT} ${GOSERVERFILES} ${GOTESTFILES}
 
 
 lint:
 	golint ./{{$service_name}}_server
 
 
-run: build
-	./bin/${EXECUTABLE}
+run: build_server
+	./bin/${SERVER_EXECUTABLE}
 
 
 onlyrun:
-	go run ${GOFILES}
+	go run ${GOSERVERFILES}
 
 
 test:
 	go test ./{{$service_name}}_server/...
+
+
+bdd: build_bdd
+	./bin/${BDD_EXECUTABLE}
 
 
 install:

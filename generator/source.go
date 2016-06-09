@@ -34,6 +34,10 @@ func (s *Source) Build() error {
 		return errors.New(fmt.Sprintf("Error when saving requests.go: %s", err))
 	}
 
+	if err := s.saveToFile("../service_templates/SERVICE_NAME_common/utils.go.tpl", "{{.ServiceName}}_common/utils.go"); err != nil {
+		return errors.New(fmt.Sprintf("Error when saving utils.go: %s", err))
+	}
+
 	if err := s.saveToFile("../service_templates/SERVICE_NAME_server/db.go.tpl", "{{.ServiceName}}_server/db.go"); err != nil {
 		return errors.New(fmt.Sprintf("Error when saving db.go: %s", err))
 	}
@@ -50,6 +54,14 @@ func (s *Source) Build() error {
 		return errors.New(fmt.Sprintf("Error when saving service.go: %s", err))
 	}
 
+	if err := s.saveToFile("../service_templates/SERVICE_NAME_server/request_validation.go.tpl", "{{.ServiceName}}_server/request_validation.go"); err != nil {
+		return errors.New(fmt.Sprintf("Error when saving request_validation.go: %s", err))
+	}
+
+	if err := s.saveToFile("../service_templates/SERVICE_NAME_server/request_validation_test.go.tpl", "{{.ServiceName}}_server/request_validation_test.go"); err != nil {
+		return errors.New(fmt.Sprintf("Error when saving request_validation_test.go: %s", err))
+	}
+
 	for _, method := range s.api.Methods {
 		s.api.CurrentMethod = method
 		if err := s.saveToFile("../service_templates/SERVICE_NAME_server/get_method.go.tpl", "{{.ServiceName}}_server/"+method.CodeFilename); err != nil {
@@ -59,6 +71,29 @@ func (s *Source) Build() error {
 
 	if err := s.saveToFile("../service_templates/SERVICE_NAME_server/SERVICE_NAME_config.yaml.example.tpl", "{{.ServiceName}}_server/{{.ServiceName}}_config.yaml.example"); err != nil {
 		return errors.New(fmt.Sprintf("Error when saving SERVICE_NAME_config.yaml.example: %s", err))
+	}
+
+	if err := s.saveTestFiles(); err != nil {
+		return errors.New(fmt.Sprintf("Error when saving test files: %s", err))
+	}
+
+	return nil
+}
+
+func (s *Source) saveTestFiles() error {
+	testFiles := []string{
+		"tests",
+		"test_requests",
+		"test_behaviour_1",
+	}
+
+	for _, file := range testFiles {
+		tplFile := fmt.Sprintf("../service_templates/SERVICE_NAME_test/%s.go.tpl", file)
+		outputFile := fmt.Sprintf("{{.ServiceName}}_test/%s.go", file)
+
+		if err := s.saveToFile(tplFile, outputFile); err != nil {
+			return errors.New(fmt.Sprintf("Error when saving %s.go: %s", file, err))
+		}
 	}
 
 	return nil
