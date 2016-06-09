@@ -285,3 +285,25 @@ type (
 		URL string `yaml:"url,omitempty"`
 	}
 )
+
+// Get the first method parameter name.
+func (operation *Operation) GetFirstPathParamName() string {
+	for _, parameter := range operation.Parameters {
+		if parameter.In == "path" {
+			return parameter.Name
+		}
+	}
+
+	return ""
+}
+
+// Get the first body parameter name.
+func (operation *Operation) GetBodyParamName() string {
+	for _, parameter := range operation.Parameters {
+		if parameter.In == "body" {
+			return parameter.Name
+		}
+	}
+
+	return ""
+}
