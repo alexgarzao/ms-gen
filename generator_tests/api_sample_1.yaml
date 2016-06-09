@@ -247,6 +247,30 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  ##########################################################
+  /path_6/{par}:
+  ##########################################################
+    put:
+      description: |
+        Put with one parameter, with data in body, result code 204.
+      operationId: path6Put
+      parameters:
+        - in: path
+          name: par
+          required: true
+          type: string
+        - in: body
+          name: path6PutRequest
+          schema:
+            $ref: "#/definitions/GenericBodyRequestWithSomeFields"
+      responses:
+        204:
+          description: Successful response
+        400:
+          description: Invalid parameter
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
 
 ############################################################
 definitions:
@@ -336,6 +360,24 @@ definitions:
         type: boolean
         description: Field 4.
 
+  ############################################################
+  GenericBodyRequestWithSomeFields:
+  ############################################################
+    type: object
+    properties:
+      fieldName1:
+        type: string
+        description: Field 1.
+      fieldName2:
+        type: number
+        description: Field 2.
+      fieldName3:
+        type: integer
+        description: Field 3.
+      fieldName4:
+        type: boolean
+        description: Field 4.
+  
   ############################################################
   GenericResponseWithSomeFields:
   ############################################################
