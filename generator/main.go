@@ -5,12 +5,19 @@ import (
 	"log"
 )
 
-var outputDir string
+var (
+	outputDir string
+	apiFile   string
+)
 
 func main() {
 	const (
+		// Output dir flag.
 		defaultOutputDir = "code"
 		outputDirUsage   = "Directory where to put the generated source"
+
+		// API file flag.
+		apiFileUsage = "File that defines the API"
 	)
 
 	log.Printf("Starting ms-gen...\n")
@@ -18,11 +25,18 @@ func main() {
 	flag.StringVar(&outputDir, "output", defaultOutputDir, outputDirUsage)
 	flag.StringVar(&outputDir, "o", defaultOutputDir, outputDirUsage+" (shorthand)")
 
+	flag.StringVar(&apiFile, "api", "", apiFileUsage)
+	flag.StringVar(&apiFile, "a", "", apiFileUsage+" (shorthand)")
+
 	flag.Parse()
 
-	log.Printf("Configuration: output=%s", outputDir)
+	log.Printf("Configuration: output='%s' api='%s'", outputDir, apiFile)
 
-	api := NewApi("../generator_tests/api_sample_1.yaml", outputDir)
+	if apiFile == "" {
+		log.Fatalf("Parameter 'api' must be informed")
+	}
+
+	api := NewApi(apiFile, outputDir)
 	if err := api.LoadFromSwagger(); err != nil {
 		log.Fatalf("When loading swagger file %s: %s", api.Filename, err)
 	}
