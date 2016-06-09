@@ -4,6 +4,8 @@ import (
 	"strings"
 
 	"github.com/alexgarzao/ms-gen/swaggerparser"
+
+	"github.com/patrickmn/sortutil"
 )
 
 type Method struct {
@@ -12,8 +14,8 @@ type Method struct {
 	PathWithParameters string
 	ServiceMethod      string
 	CodeFilename       string
-	Parameters         []*Parameter
-	Responses          []*Response
+	Parameters         []Parameter
+	Responses          []Response
 	Imports            []string
 }
 
@@ -51,43 +53,53 @@ func NewMethod(serviceName string, pathWithParameters string, methodType string,
 }
 
 // Fill method parameters.
-func (method *Method) fillMethodParameters(swgParameters []*swaggerparser.Parameter) []*Parameter {
-	var parameters []*Parameter
+func (method *Method) fillMethodParameters(swgParameters []*swaggerparser.Parameter) []Parameter {
+	var parameters []Parameter
 
 	for _, swgParameter := range swgParameters {
-		parameters = append(parameters, NewParameter(method.ServiceName, swgParameter))
+		parameters = append(parameters, *NewParameter(method.ServiceName, swgParameter))
 	}
+
+	sortutil.AscByField(parameters, "Name")
 
 	return parameters
 }
 
 // Fill responses.
-func (method *Method) fillResponses(apiResponses map[string]*swaggerparser.Response) []*Response {
-	var responses []*Response
+func (method *Method) fillResponses(apiResponses map[string]*swaggerparser.Response) []Response {
+	var responses []Response
 
 	for apiResponseKey, apiResponseValue := range apiResponses {
-		responses = append(responses, NewResponse(method.ServiceName, apiResponseKey, apiResponseValue))
+		responses = append(responses, *NewResponse(method.ServiceName, apiResponseKey, apiResponseValue))
 	}
+
+	sortutil.AscByField(responses, "ResultCode")
 
 	return responses
 }
 
+func (method Method) String() string {
+	return method.ServiceMethod
+}
+
 // Fill methods.
-func FillMethods(serviceName string, pathDefinitions map[string]*swaggerparser.Path) []*Method {
-	var methods []*Method
+func FillMethods(serviceName string, pathDefinitions map[string]*swaggerparser.Path) []Method {
+	var methods []Method
 	for k, v := range pathDefinitions {
 		if v.Get != nil {
-			methods = append(methods, NewMethod(serviceName, k, "Get", v.Get))
+			methods = append(methods, *NewMethod(serviceName, k, "Get", v.Get))
 		}
 
 		if v.Post != nil {
-			methods = append(methods, NewMethod(serviceName, k, "Post", v.Post))
+			methods = append(methods, *NewMethod(serviceName, k, "Post", v.Post))
 		}
 
 		if v.Put != nil {
-			methods = append(methods, NewMethod(serviceName, k, "Put", v.Put))
+			methods = append(methods, *NewMethod(serviceName, k, "Put", v.Put))
 		}
 	}
+
+	sortutil.AscByField(methods, "ServiceMethod")
 
 	return methods
 }

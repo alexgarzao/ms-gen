@@ -16,9 +16,9 @@ type Api struct {
 	ServiceName         string
 	FriendlyServiceName string
 	CommonImportPath    string
-	Methods             []*Method
-	Definitions         []*Definition
-	CurrentMethod       *Method
+	Methods             []Method
+	Definitions         []Definition
+	CurrentMethod       Method
 }
 
 func NewApi(filename string, outputDir string) (api *Api) {
