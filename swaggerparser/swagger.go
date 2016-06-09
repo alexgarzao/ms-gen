@@ -35,6 +35,8 @@ type (
 		Contact        *ContactDefinition `yaml:"contact,omitempty"`
 		License        *LicenseDefinition `yaml:"license,omitempty"`
 		Version        string             `yaml:"version"`
+		// ms-gen extension.
+		ServiceName string `yaml:"x-serviceName"`
 	}
 
 	// Path holds the relative paths to the individual endpoints.

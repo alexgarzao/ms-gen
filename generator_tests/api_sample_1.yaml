@@ -8,6 +8,7 @@ info:
   title: ms-gen sample
   description: |
     Tests to msg_gen.
+  x-serviceName: myservice
 ############################################################
 
 ############################################################

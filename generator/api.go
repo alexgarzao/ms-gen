@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 
 	"github.com/alexgarzao/ms-gen/swaggerparser"
+
+	"errors"
 )
 
 type Api struct {
@@ -48,7 +50,12 @@ func (api *Api) parser(text []byte) error {
 		return err
 	}
 
-	api.ServiceName = "myservice"
+	if swagger.Info.ServiceName == "" {
+		return errors.New("Service name must be informed")
+	}
+
+	api.ServiceName = swagger.Info.ServiceName
+
 	api.FriendlyServiceName = swagger.Info.Title
 
 	api.Methods = FillMethods(api.ServiceName, swagger.Paths)
