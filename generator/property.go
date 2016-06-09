@@ -15,7 +15,7 @@ type Property struct {
 func NewProperty(name string, schema *swaggerparser.JSONSchema) *Property {
 	return &Property{
 		Name:     strings.Title(name),
-		Type:     ToGolangType(string(schema.Type), ""),
+		Type:     schema.ToGolangType(),
 		JsonName: name,
 	}
 }
