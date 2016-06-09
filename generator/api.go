@@ -51,7 +51,7 @@ func (api *Api) parser(text []byte) error {
 	api.ServiceName = "myservice"
 	api.FriendlyServiceName = swagger.Info.Title
 
-	api.Methods = api.fillMethods(swagger.Paths)
+	api.Methods = FillMethods(api.ServiceName, swagger.Paths)
 
 	api.Definitions = FillDefinitions(swagger.Definitions)
 
@@ -63,24 +63,4 @@ func (api *Api) parser(text []byte) error {
 	api.CommonImportPath = commonImportPath
 
 	return nil
-}
-
-// Fill methods.
-func (api *Api) fillMethods(pathDefinitions map[string]*swaggerparser.Path) []*Method {
-	var methods []*Method
-	for k, v := range pathDefinitions {
-		if v.Get != nil {
-			methods = append(methods, NewMethod(api.ServiceName, k, "Get", v.Get))
-		}
-
-		if v.Post != nil {
-			methods = append(methods, NewMethod(api.ServiceName, k, "Post", v.Post))
-		}
-
-		if v.Put != nil {
-			methods = append(methods, NewMethod(api.ServiceName, k, "Put", v.Put))
-		}
-	}
-
-	return methods
 }

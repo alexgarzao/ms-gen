@@ -69,3 +69,23 @@ func (method *Method) fillResponses(serviceName string, apiResponses map[string]
 
 	return responses
 }
+
+// Fill methods.
+func FillMethods(serviceName string, pathDefinitions map[string]*swaggerparser.Path) []*Method {
+	var methods []*Method
+	for k, v := range pathDefinitions {
+		if v.Get != nil {
+			methods = append(methods, NewMethod(serviceName, k, "Get", v.Get))
+		}
+
+		if v.Post != nil {
+			methods = append(methods, NewMethod(serviceName, k, "Post", v.Post))
+		}
+
+		if v.Put != nil {
+			methods = append(methods, NewMethod(serviceName, k, "Put", v.Put))
+		}
+	}
+
+	return methods
+}
