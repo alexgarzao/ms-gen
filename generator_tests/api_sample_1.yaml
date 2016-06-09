@@ -7,7 +7,7 @@ info:
   version: "0.0.1"
   title: ms-gen sample
   description: |
-    Tests to ms_gen.
+    Tests to msg_gen.
 ############################################################
 
 ############################################################
@@ -151,10 +151,50 @@ paths:
   ##########################################################
   /path_2:
   ##########################################################
+    get:
+      description: |
+        GET method, one parameter in query, and can return 200 or 400 with error information.
+      operationId: path2Get1
+      parameters:
+        - in: query
+          name: queryPar
+          type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/GenericResponseWithSomeFields"
+        400:
+          description: Invalid parameter
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
     post:
       description: |
         POST method, and can return 200 or 400.
       operationId: path2Post1
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/GenericResponseWithSomeFields"
+        400:
+          description: Invalid parameter
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  ##########################################################
+  /path_3:
+  ##########################################################
+    post:
+      description: |
+        Post with arguments in the body, returning some result values in 200 and 400.
+      operationId: path3Post
+      parameters:
+        - in: body
+          name: path3PostRequest
+          schema:
+            $ref: "#/definitions/Path3PostRequest"
       responses:
         200:
           description: Successful response
@@ -256,6 +296,24 @@ definitions:
 
   ############################################################
   GenericResponseWithSomeFields:
+  ############################################################
+    type: object
+    properties:
+      fieldName1:
+        type: string
+        description: Field 1.
+      fieldName2:
+        type: number
+        description: Field 2.
+      fieldName3:
+        type: integer
+        description: Field 3.
+      fieldName4:
+        type: boolean
+        description: Field 4.
+  
+  ############################################################
+  Path3PostRequest:
   ############################################################
     type: object
     properties:
