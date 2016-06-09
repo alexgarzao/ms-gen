@@ -12,7 +12,7 @@ type Method struct {
 	ServiceMethod      string
 	CodeFilename       string
 	Parameters         []*Parameter
-	Responses          []Response
+	Responses          []*Response
 	Imports            []string
 }
 
@@ -60,22 +60,11 @@ func (method *Method) fillPathParameters(serviceName string, swgParameters []*sw
 }
 
 // Fill responses.
-func (method *Method) fillResponses(serviceName string, apiResponses map[string]*swaggerparser.Response) []Response {
-	var responses []Response
+func (method *Method) fillResponses(serviceName string, apiResponses map[string]*swaggerparser.Response) []*Response {
+	var responses []*Response
 
 	for apiResponseKey, apiResponseValue := range apiResponses {
-		response := Response{}
-		response.ResultCode = apiResponseKey
-
-		if apiResponseValue.Schema != nil {
-			completeRef := apiResponseValue.Schema.Ref // "#/definitions/GetMethod1Response"
-			response.Ref = completeRef[strings.LastIndex(completeRef, "/")+1:]
-
-			// Help fields.
-			response.Name = strings.ToLower(string(response.Ref[0])) + response.Ref[1:]
-			response.Type = serviceName + "_common." + response.Ref
-		}
-		responses = append(responses, response)
+		responses = append(responses, NewResponse(serviceName, apiResponseKey, apiResponseValue))
 	}
 
 	return responses

@@ -31,14 +31,6 @@ type (
 		Type     string
 		JsonName string
 	}
-
-	Response struct {
-		ResultCode  string
-		Description string
-		Ref         string
-		Name        string
-		Type        string
-	}
 )
 
 func NewApi(filename string, outputDir string) (api *Api) {
