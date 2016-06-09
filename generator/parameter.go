@@ -2,8 +2,6 @@ package main
 
 import (
 	"github.com/alexgarzao/ms-gen/swaggerparser"
-
-	"strings"
 )
 
 type Parameter struct {
@@ -24,13 +22,7 @@ func NewParameter(serviceName string, swgParameter *swaggerparser.Parameter) *Pa
 		Format:      swgParameter.Format,
 	}
 
-	if swgParameter.Schema != nil {
-		completeRef := swgParameter.Schema.Ref // "#/definitions/GetMethod1Response"
-		ref := completeRef[strings.LastIndex(completeRef, "/")+1:]
-		parameter.Type = serviceName + "_common." + ref
-	} else if swgParameter.Type != "" {
-		parameter.Type = serviceName + "_common." + swgParameter.Type
-	}
+	parameter.Type = serviceName + "_common." + swgParameter.ToGolangType()
 
 	return parameter
 }

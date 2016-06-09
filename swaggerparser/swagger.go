@@ -1,5 +1,9 @@
 package swaggerparser
 
+import (
+	"strings"
+)
+
 type (
 	// Based on this definition: https://github.com/goadesign/goa/blob/master/goagen/gen_swagger/swagger.go
 
@@ -306,4 +310,15 @@ func (operation *Operation) GetBodyParamName() string {
 	}
 
 	return ""
+}
+
+func (parameter *Parameter) ToGolangType() string {
+	if parameter.Schema != nil {
+		completeRef := parameter.Schema.Ref // "#/definitions/GetMethod1Response"
+		return completeRef[strings.LastIndex(completeRef, "/")+1:]
+	} else if parameter.Type != "" {
+		return parameter.Type
+	}
+
+	return "undefined"
 }
