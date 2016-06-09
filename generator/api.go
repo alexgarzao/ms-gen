@@ -19,13 +19,14 @@ type (
 		CurrentPath         ApiPath
 	}
 
-	ApiPath struct {
+	ApiPath struct { // TODO: In really, its a method.
 		MethodType         string
 		PathWithParameters string
 		ServiceMethod      string
 		CodeFilename       string
 		Parameters         []ApiParameter
 		Responses          []ApiResponse
+		Imports            []string
 	}
 
 	Definition struct {
@@ -140,6 +141,12 @@ func (api *Api) newMethod(pathWithParameters string, methodType string, operatio
 		normalizedPath += "/:" + pathParamName
 	}
 
+	if api.getBodyParamName(operation.Parameters) != "" {
+		path.Imports = append(path.Imports, "fmt")
+		path.Imports = append(path.Imports, "net/http")
+
+	}
+
 	path.PathWithParameters = normalizedPath
 
 	return path
@@ -155,8 +162,15 @@ func (api *Api) fillPathParameters(swgParameters []*Parameter) []ApiParameter {
 			In:          swgParameter.In,
 			Description: swgParameter.Description,
 			Required:    swgParameter.Required,
-			Type:        swgParameter.Type,
 			Format:      swgParameter.Format,
+		}
+
+		if swgParameter.Schema != nil {
+			completeRef := swgParameter.Schema.Ref // "#/definitions/GetMethod1Response"
+			ref := completeRef[strings.LastIndex(completeRef, "/")+1:]
+			parameter.Type = api.ServiceName + "_common." + ref
+		} else if swgParameter.Type != "" {
+			parameter.Type = api.ServiceName + "_common." + swgParameter.Type
 		}
 
 		parameters = append(parameters, parameter)
@@ -169,6 +183,17 @@ func (api *Api) fillPathParameters(swgParameters []*Parameter) []ApiParameter {
 func (api *Api) getPathParamName(swgParameters []*Parameter) string {
 	for _, swgParameter := range swgParameters {
 		if swgParameter.In == "path" {
+			return swgParameter.Name
+		}
+	}
+
+	return ""
+}
+
+// Get the first body parameter name.
+func (api *Api) getBodyParamName(swgParameters []*Parameter) string {
+	for _, swgParameter := range swgParameters {
+		if swgParameter.In == "body" {
 			return swgParameter.Name
 		}
 	}
