@@ -1,4 +1,4 @@
-package main
+package swaggerparser
 
 type (
 	// Based on this definition: https://github.com/goadesign/goa/blob/master/goagen/gen_swagger/swagger.go

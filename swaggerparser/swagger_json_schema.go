@@ -1,4 +1,4 @@
-package main
+package swaggerparser
 
 type (
 	// JSONSchema represents an instance of a JSON schema.

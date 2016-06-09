@@ -5,6 +5,8 @@ import (
 
 	"io/ioutil"
 	"strings"
+
+	"github.com/alexgarzao/ms-gen/swaggerparser"
 )
 
 type (
@@ -81,7 +83,7 @@ func (api *Api) LoadFromSwagger() error {
 }
 
 func (api *Api) parser(text []byte) error {
-	swagger := new(Swagger)
+	swagger := new(swaggerparser.Swagger)
 
 	if err := yaml.Unmarshal(text, swagger); err != nil {
 		return err
@@ -105,7 +107,7 @@ func (api *Api) parser(text []byte) error {
 }
 
 // Fill paths.
-func (api *Api) fillPaths(pathDefinitions map[string]*Path) []ApiPath {
+func (api *Api) fillPaths(pathDefinitions map[string]*swaggerparser.Path) []ApiPath {
 	var paths []ApiPath
 	for k, v := range pathDefinitions {
 		if v.Get != nil {
@@ -124,7 +126,7 @@ func (api *Api) fillPaths(pathDefinitions map[string]*Path) []ApiPath {
 	return paths
 }
 
-func (api *Api) newMethod(pathWithParameters string, methodType string, operation *Operation) ApiPath {
+func (api *Api) newMethod(pathWithParameters string, methodType string, operation *swaggerparser.Operation) ApiPath {
 
 	serviceMethod := operation.OperationID
 	pathWithoutParameter := GetPathWithoutParameter(pathWithParameters)
@@ -157,7 +159,7 @@ func (api *Api) newMethod(pathWithParameters string, methodType string, operatio
 }
 
 // Fill path parameters.
-func (api *Api) fillPathParameters(swgParameters []*Parameter) []ApiParameter {
+func (api *Api) fillPathParameters(swgParameters []*swaggerparser.Parameter) []ApiParameter {
 	var parameters []ApiParameter
 
 	for _, swgParameter := range swgParameters {
@@ -184,7 +186,7 @@ func (api *Api) fillPathParameters(swgParameters []*Parameter) []ApiParameter {
 }
 
 // Get the first path parameter name.
-func (api *Api) getPathParamName(swgParameters []*Parameter) string {
+func (api *Api) getPathParamName(swgParameters []*swaggerparser.Parameter) string {
 	for _, swgParameter := range swgParameters {
 		if swgParameter.In == "path" {
 			return swgParameter.Name
@@ -195,7 +197,7 @@ func (api *Api) getPathParamName(swgParameters []*Parameter) string {
 }
 
 // Get the first body parameter name.
-func (api *Api) getBodyParamName(swgParameters []*Parameter) string {
+func (api *Api) getBodyParamName(swgParameters []*swaggerparser.Parameter) string {
 	for _, swgParameter := range swgParameters {
 		if swgParameter.In == "body" {
 			return swgParameter.Name
@@ -206,7 +208,7 @@ func (api *Api) getBodyParamName(swgParameters []*Parameter) string {
 }
 
 // Fill definitions.
-func (api *Api) fillDefinitions(apiDefinitions map[string]*JSONSchema) []Definition {
+func (api *Api) fillDefinitions(apiDefinitions map[string]*swaggerparser.JSONSchema) []Definition {
 	var definitions []Definition
 
 	for apiDefinitionKey, apiDefinitionValue := range apiDefinitions {
@@ -227,7 +229,7 @@ func (api *Api) fillDefinitions(apiDefinitions map[string]*JSONSchema) []Definit
 }
 
 // Fill responses.
-func (api *Api) fillResponses(apiResponses map[string]*Response) []ApiResponse {
+func (api *Api) fillResponses(apiResponses map[string]*swaggerparser.Response) []ApiResponse {
 	var responses []ApiResponse
 
 	for apiResponseKey, apiResponseValue := range apiResponses {
