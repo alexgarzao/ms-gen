@@ -271,6 +271,32 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  ##########################################################
+  /path_7/{par}:
+  ##########################################################
+    put:
+      description: |
+        Put with one parameter, with data in body, result code 200.
+      operationId: path7Put
+      parameters:
+        - in: path
+          name: par
+          required: true
+          type: string
+        - in: body
+          name: path7PutRequest
+          schema:
+            $ref: "#/definitions/GenericBodyRequestWithSomeFields"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/GenericResponseWithSomeFields"
+        400:
+          description: Invalid parameter
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
 
 ############################################################
 definitions:
