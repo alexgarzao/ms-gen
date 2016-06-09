@@ -115,6 +115,10 @@ func (api *Api) fillPaths(pathDefinitions map[string]*Path) []ApiPath {
 		if v.Post != nil {
 			paths = append(paths, api.newMethod(k, "Post", v.Post))
 		}
+
+		if v.Put != nil {
+			paths = append(paths, api.newMethod(k, "Put", v.Put))
+		}
 	}
 
 	return paths
