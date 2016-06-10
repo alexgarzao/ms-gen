@@ -62,8 +62,14 @@ func SendTestValidPutRequest(testId string, uri string, parameter string, reques
 	f := frisby.Create(testId).
 		Put(MYSERVICE_URL + uri + parameter).
 		SetJson(request).
-		Send().
-		ExpectStatus(expectedStatusCode)
+		Send()
+
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
+
+	f.ExpectStatus(expectedStatusCode)
 
 	if serviceResult != nil {
 		f.AfterContent(func(F *frisby.Frisby, content []byte, inputErr error) {
@@ -86,8 +92,14 @@ func SendTestValidPostRequest(testId string, uri string, request interface{}, ex
 	f := frisby.Create(testId).
 		Post(MYSERVICE_URL + uri).
 		SetJson(request).
-		Send().
-		ExpectStatus(expectedStatusCode)
+		Send()
+	
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
+
+	f.ExpectStatus(expectedStatusCode)
 
 	if serviceResult != nil {
 		f.AfterContent(func(F *frisby.Frisby, content []byte, inputErr error) {
@@ -109,8 +121,14 @@ func SendTestValidGetRequest(testId string, uri string, parameter string, reques
 
 	f := frisby.Create(testId).
 		Get(MYSERVICE_URL + uri + parameter).
-		Send().
-		ExpectStatus(expectedStatusCode)
+		Send()
+	
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
+
+	f.ExpectStatus(expectedStatusCode)
 
 	if serviceResult != nil {
 		f.AfterContent(func(F *frisby.Frisby, content []byte, inputErr error) {
@@ -130,11 +148,17 @@ func SendTestValidGetRequest(testId string, uri string, parameter string, reques
 func SendTestInvalidPutRequest(testId string, uri string, parameter string, request interface{}, expectedStatusCode int, expectedErrorMessage string) {
 	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
 
-	frisby.Create(testId).
+	f := frisby.Create(testId).
 		Put(MYSERVICE_URL+uri+parameter).
 		SetJson(request).
-		Send().
-		ExpectStatus(expectedStatusCode).
+		Send()
+
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
+
+	f.ExpectStatus(expectedStatusCode).
 		ExpectJson("Error", expectedErrorMessage).
 		AfterJson(func(F *frisby.Frisby, json *simplejson.Json, err error) {
 			errorMessage, _ := json.Get("Error").String()
@@ -147,11 +171,17 @@ func SendTestInvalidPutRequest(testId string, uri string, parameter string, requ
 func SendTestInvalidPostRequest(testId string, uri string, request interface{}, expectedStatusCode int, expectedErrorMessage string) {
 	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
 
-	frisby.Create(testId).
+	f := frisby.Create(testId).
 		Post(MYSERVICE_URL + uri).
 		SetJson(request).
-		Send().
-		ExpectStatus(expectedStatusCode).
+		Send()
+
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
+
+	f.ExpectStatus(expectedStatusCode).
 		AfterJson(func(F *frisby.Frisby, json *simplejson.Json, err error) {
 			errorMessage, _ := json.Get("Error").String()
 			if errorMessage != expectedErrorMessage {
@@ -163,10 +193,16 @@ func SendTestInvalidPostRequest(testId string, uri string, request interface{}, 
 func SendTestInvalidGetRequest(testId string, uri string, parameter string, request interface{}, expectedStatusCode int, expectedErrorMessage string) {
 	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
 
-	frisby.Create(testId).
+	f := frisby.Create(testId).
 		Get(MYSERVICE_URL + uri + parameter).
-		Send().
-		ExpectStatus(expectedStatusCode).
+		Send()
+
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
+
+	f.ExpectStatus(expectedStatusCode).
 		AfterJson(func(F *frisby.Frisby, json *simplejson.Json, err error) {
 			errorMessage, _ := json.Get("Error").String()
 			if errorMessage != expectedErrorMessage {
