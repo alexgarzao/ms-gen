@@ -21,6 +21,11 @@ GOTESTFILES=\
 	{{ range $value := .Methods }}{{$service_name}}_test/test_{{$value.CodeFilename}}\
 	{{ end }}{{$service_name}}_test/test_requests.go
 
+GOCOMMONFILES=\
+	{{$service_name}}_common/definitions.go\
+	{{$service_name}}_common/requests.go\
+	{{$service_name}}_common/utils.go
+
 
 default: build
 
@@ -41,11 +46,11 @@ doc:
 
 
 fmt:
-	${GOFMT} ${GOSERVERFILES} ${GOTESTFILES}
+	${GOFMT} ${GOSERVERFILES} ${GOTESTFILES} ${GOCOMMONFILES}
 
 
 lint:
-	golint ./{{$service_name}}_server
+	golint ./{{$service_name}}_server ./{{$service_name}}_common
 
 
 run: build_server
@@ -83,7 +88,7 @@ update:
 
 
 vet:
-	go vet ./{{$service_name}}_server/...
+	go vet ./{{$service_name}}_server/... ./{{$service_name}}_common/...
 	
 
 #stop:
