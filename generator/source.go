@@ -64,7 +64,7 @@ func (s *Source) Build() error {
 
 	for _, method := range s.api.Methods {
 		s.api.CurrentMethod = method
-		if err := s.saveToFile("../service_templates/SERVICE_NAME_server/get_method.go.tpl", "{{.ServiceName}}_server/"+method.CodeFilename); err != nil {
+		if err := s.saveToFile("../service_templates/SERVICE_NAME_server/method.go.tpl", "{{.ServiceName}}_server/"+method.CodeFilename); err != nil {
 			return errors.New(fmt.Sprintf("Error when saving %s: %s", method.CodeFilename, err))
 		}
 	}
