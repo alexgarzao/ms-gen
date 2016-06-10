@@ -20,12 +20,12 @@ func CreateBasePath(filename string) error {
 }
 
 func GetImportBasePath(absolutePath string) (string, error) {
-	n := strings.Index(absolutePath, "/github.com/")
+	n := strings.LastIndex(absolutePath, "/src/")
 	if n == -1 {
-		return "", errors.New(fmt.Sprintf("Path github.com not found in %s", absolutePath))
+		return "", errors.New(fmt.Sprintf("Path /src/ not found in %s", absolutePath))
 	}
 
-	return absolutePath[n+1:], nil
+	return absolutePath[n+5:], nil
 }
 
 func GetCommonImportPath(outputDir string, serviceName string) (string, error) {
