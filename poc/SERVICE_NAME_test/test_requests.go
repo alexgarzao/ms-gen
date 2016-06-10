@@ -48,14 +48,28 @@ func SendTestValidPutRequest(testId string, uri string, parameter string, reques
 	}
 }
 
-func SendTestValidPostRequest(testId string, uri string, request interface{}, expectedStatusCode int) {
+func SendTestValidPostRequest(testId string, uri string, request interface{}, expectedStatusCode int, serviceResult interface{}) {
 	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
 
-	frisby.Create(testId).
+	f := frisby.Create(testId).
 		Post(MYSERVICE_URL + uri).
 		SetJson(request).
 		Send().
 		ExpectStatus(expectedStatusCode)
+
+	if serviceResult != nil {
+		f.AfterContent(func(F *frisby.Frisby, content []byte, inputErr error) {
+			if inputErr != nil {
+				F.AddError(inputErr.Error())
+				return
+			}
+
+			if err := gojson.Unmarshal(content, serviceResult); err != nil {
+				F.AddError(err.Error())
+				return
+			}
+		})
+	}
 }
 
 func SendTestValidGetRequest(testId string, uri string, parameter string, request interface{}, expectedStatusCode int, serviceResult interface{}) {
