@@ -22,7 +22,10 @@ GOTESTFILES=\
 	{{$service_name}}_test/test_behaviour_1.go
 
 
-default: build_server
+default: build
+
+
+build: build_server build_bdd
 
 
 build_server: vet
