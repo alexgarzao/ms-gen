@@ -30,11 +30,20 @@ func (s *Service) {{.CurrentMethod.ServiceMethod}}(w rest.ResponseWriter, r *res
 		)
 		return
 	}
+    // Check if all necessary data are presents in the request.
+    ok, missed := CheckRequiredFields({{$parameter.Name}})
+    if !ok {
+	    rest.Error(
+                w,
+                "Some data not found: "+missed,
+                http.StatusBadRequest,
+        )
+        return
+    }
 		{{end}}
 	{{ end }}
 	
-
-
+	
 	{{ $gen_param_values := "false" }}
 
 	{{ range $parameter := .CurrentMethod.Parameters }}

@@ -16,7 +16,18 @@ func NewDefinition(name string, schema *swaggerparser.JSONSchema) *Definition {
 
 	definition.Name = name
 	for propertyKey, propertyValue := range schema.Properties {
-		property := NewProperty(propertyKey, propertyValue)
+
+		// Verify if this a required property.
+		propertyRequired := false
+
+		for _, required := range schema.Required {
+			if required == propertyKey {
+				propertyRequired = true
+				break
+			}
+		}
+
+		property := NewProperty(propertyKey, propertyValue, propertyRequired)
 		definition.Properties = append(definition.Properties, *property)
 	}
 

@@ -391,6 +391,9 @@ definitions:
   GenericBodyRequestWithSomeFields:
   ############################################################
     type: object
+    required:
+      - fieldName1
+      - fieldName3
     properties:
       fieldName1:
         type: string
