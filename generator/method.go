@@ -11,6 +11,7 @@ import (
 type Method struct {
 	ServiceName        string
 	MethodType         string
+	Path               string
 	PathWithParameters string
 	ServiceMethod      string
 	CodeFilename       string
@@ -48,6 +49,7 @@ func NewMethod(serviceName string, pathWithParameters string, methodType string,
 	}
 
 	method.PathWithParameters = normalizedPath
+	method.Path = pathWithoutParameter
 
 	return method
 }
