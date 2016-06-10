@@ -11,13 +11,6 @@ import (
 	"github.com/verdverm/frisby"
 )
 
-func SendTestValidRequest1(testId string, parameter string, request interface{}) {
-	SendTestValidGetRequest(testId, "method_1/", parameter, request, 200, nil)
-}
-
-func SendTestInvalidRequest1(testId string, parameter string, request interface{}, expectedErrorMessage string) {
-	SendTestInvalidGetRequest(testId, "method_1/", parameter, request, 400, expectedErrorMessage)
-}
 
 {{/* Build test functions for GET operations */}}
 {{ range $method := .Methods }}

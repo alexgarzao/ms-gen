@@ -18,8 +18,8 @@ GOSERVERFILES=\
 
 GOTESTFILES=\
 	{{$service_name}}_test/tests.go\
-	{{$service_name}}_test/test_requests.go\
-	{{$service_name}}_test/test_behaviour_1.go
+	{{ range $value := .Methods }}{{$service_name}}_test/test_{{$value.CodeFilename}}\
+	{{ end }}{{$service_name}}_test/test_requests.go
 
 
 default: build

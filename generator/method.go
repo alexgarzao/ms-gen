@@ -18,6 +18,7 @@ type Method struct {
 	Parameters         []Parameter
 	Responses          []Response
 	Imports            []string
+	TestType           string
 }
 
 func NewMethod(serviceName string, pathWithParameters string, methodType string, operation *swaggerparser.Operation) *Method {
@@ -31,6 +32,8 @@ func NewMethod(serviceName string, pathWithParameters string, methodType string,
 		ServiceMethod: strings.Title(serviceMethod),
 		CodeFilename:  "service_" + CamelToSnake(operation.OperationID) + ".go",
 	}
+
+	method.TestType = "Test" + method.ServiceMethod
 
 	method.Parameters = method.fillMethodParameters(operation.Parameters)
 	method.Responses = method.fillResponses(operation.Responses)

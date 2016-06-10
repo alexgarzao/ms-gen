@@ -84,7 +84,6 @@ func (s *Source) saveTestFiles() error {
 	testFiles := []string{
 		"tests",
 		"test_requests",
-		"test_behaviour_1",
 	}
 
 	for _, file := range testFiles {
@@ -93,6 +92,14 @@ func (s *Source) saveTestFiles() error {
 
 		if err := s.saveToFile(tplFile, outputFile); err != nil {
 			return errors.New(fmt.Sprintf("Error when saving %s.go: %s", file, err))
+		}
+	}
+
+	// Build each test_"behaviour".go
+	for _, method := range s.api.Methods {
+		s.api.CurrentMethod = method
+		if err := s.saveToFile("../service_templates/SERVICE_NAME_test/test_behaviour_1.go.tpl", "{{.ServiceName}}_test/test_"+method.CodeFilename); err != nil {
+			return errors.New(fmt.Sprintf("Error when saving %s: %s", "test_"+method.CodeFilename, err))
 		}
 	}
 

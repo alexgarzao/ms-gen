@@ -6,14 +6,14 @@ import (
 	common 	"{{.CommonImportPath}}"
 )
 
-type TestBehaviour1 struct {
+type {{$.CurrentMethod.TestType}} struct {
 }
 
-func NewTestBehaviour1() *TestBehaviour1 {
-	return &TestBehaviour1{}
+func New{{$.CurrentMethod.TestType}}() *{{$.CurrentMethod.TestType}} {
+	return &{{$.CurrentMethod.TestType}}{}
 }
 
-func (t *TestBehaviour1) RunAllTests() {
+func (t *{{$.CurrentMethod.TestType}}) RunAllTests() {
 	log.Println("Checking behaviour 1")
 
 	t.test1() // Remember to use great names :-)
@@ -22,7 +22,7 @@ func (t *TestBehaviour1) RunAllTests() {
 	//	t.testN()
 }
 
-func (t *TestBehaviour1) test1() {
+func (t *{{$.CurrentMethod.TestType}}) test1() {
 	// Action 1
 	//     For example, send a valid request to method 1, method 2, ...
 	//     Sure, you can send invalid requests to test desired behaviours...
@@ -34,15 +34,22 @@ func (t *TestBehaviour1) test1() {
 		FieldName1: "xxx",
 		FieldName2: "yyy",
 	}
-
-	SendTestValidRequest1("Request XXX with valid infos", "parameter_value", request)
+	{{ if ne $.CurrentMethod.MethodType "Post" }}
+	SendTestValid{{$.CurrentMethod.ServiceMethod}}("Request XXX with valid infos", "parameter_value", request)
+	{{else}}
+	SendTestValid{{$.CurrentMethod.ServiceMethod}}("Request XXX with valid infos", request)
+	{{end}}
 }
 
-func (T *TestBehaviour1) test2() {
+func (T *{{$.CurrentMethod.TestType}}) test2() {
 	request := common.ServiceRequest1{
 		FieldName1: "invalid",
 		FieldName2: "yyy",
 	}
 
-	SendTestInvalidRequest1("Request XXX with invalid infos", "parameter_value", request, "Expected message error")
+	{{ if ne $.CurrentMethod.MethodType "Post" }}
+	SendTestInvalid{{$.CurrentMethod.ServiceMethod}}("Request XXX with invalid infos", "parameter_value", request, "Expected message error")
+	{{else}}
+	SendTestInvalid{{$.CurrentMethod.ServiceMethod}}("Request XXX with invalid infos", request, "Expected message error")
+	{{end}}
 }

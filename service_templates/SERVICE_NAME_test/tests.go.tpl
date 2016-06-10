@@ -11,10 +11,8 @@ const (
 func main() {
 	frisby.Global.PrintProgressName = true
 
-	NewTestBehaviour1().RunAllTests()
-	//	NewTestBehaviour2().RunAllTests()
-	//	...
-	//	NewTestBehaviourN().RunAllTests()
+	{{ range $method := .Methods }}New{{$method.TestType}}().RunAllTests()
+	{{ end }}
 
 	frisby.Global.PrintReport()
 }

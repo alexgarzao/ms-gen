@@ -11,9 +11,7 @@ type ServiceRequest1 struct {
 }
 
 {{ range $definition := .Definitions }}
-type {{$definition.Name}} struct {
-	{{ range $property := $definition.Properties }}
-	{{$property.Name}} {{$property.Type}} `json:"{{$property.JsonName}}"{{$property.JsonValidations}}`
-	{{ end }}	
+type {{$definition.Name}} struct { {{ range $property := $definition.Properties }}
+	{{$property.Name}} {{$property.Type}} `json:"{{$property.JsonName}}"{{$property.JsonValidations}}`{{ end }}	
 }
 {{ end }}
