@@ -95,7 +95,7 @@ func (schema *JSONSchema) ToGolangType() string {
 	}
 
 	swaggerType := string(schema.Type)
-	swaggerFormat := ""
+	swaggerFormat := schema.Format
 
 	result, ok := goType[swaggerType+"|"+swaggerFormat]
 	if ok == false {
