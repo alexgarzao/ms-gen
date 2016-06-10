@@ -24,7 +24,7 @@ func NewResponse(serviceName string, resultCode string, swgResponse *swaggerpars
 
 		// Help fields.
 		response.Name = strings.ToLower(string(response.Ref[0])) + response.Ref[1:]
-		response.Type = serviceName + "_common." + response.Ref
+		response.Type = "common." + response.Ref
 	}
 
 	return response

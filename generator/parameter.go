@@ -22,7 +22,7 @@ func NewParameter(serviceName string, swgParameter *swaggerparser.Parameter) *Pa
 		Format:      swgParameter.Format,
 	}
 
-	parameter.Type = serviceName + "_common." + swgParameter.ToGolangType()
+	parameter.Type = "common." + swgParameter.ToGolangType()
 
 	return parameter
 }

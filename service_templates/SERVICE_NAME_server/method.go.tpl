@@ -1,7 +1,7 @@
 package main
 
 import (
-	"{{.CommonImportPath}}"
+	common 	"{{.CommonImportPath}}"
 
 	"github.com/ant0ine/go-json-rest/rest"
 	{{ range $import := .CurrentMethod.Imports }}
@@ -59,7 +59,7 @@ func (s *Service) {{.CurrentMethod.ServiceMethod}}(w rest.ResponseWriter, r *res
 
 	{{ range $response := .CurrentMethod.Responses }}
 		{{if ne $response.Name ""}}
-			{{$response.Name}} := {{$response.Type}}{}
+			{{$response.Name}}{{$response.ResultCode}} := {{$response.Type}}{}
 		{{end}}
 	{{ end }}
 	
@@ -67,7 +67,8 @@ func (s *Service) {{.CurrentMethod.ServiceMethod}}(w rest.ResponseWriter, r *res
 
 	{{ range $response := .CurrentMethod.Responses }}
 		{{if ne $response.Name ""}}
-			w.WriteJson({{$response.Name}})
+			// Result code = {{$response.ResultCode}}?
+			w.WriteJson({{$response.Name}}{{$response.ResultCode}})
 		{{end}}
 	{{ end }}
 }

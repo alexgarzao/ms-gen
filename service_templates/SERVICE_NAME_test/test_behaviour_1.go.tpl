@@ -30,10 +30,29 @@ func (t *{{$.CurrentMethod.TestType}}) test1() {
 	// ...
 	// Action N
 
+	{{ range $parameter := .CurrentMethod.Parameters }}
+		{{if eq $parameter.In "body"}}
+			// Body parameter.
+			// {{$parameter.Name}} := {{$parameter.Type}}{
+				// FieldName1: "xxx",
+				// FieldName2: "yyy",
+			// }
+		{{end}}
+		{{if eq $parameter.In "path"}}
+			// Path parameter.
+			// {{$parameter.Name}} := ""
+		{{end}}
+		{{if eq $parameter.In "query"}}
+			// Query parameter.
+			// {{$parameter.Name}} := ""
+		{{end}}
+	{{ end }}
+
 	request := common.ServiceRequest1{
 		FieldName1: "xxx",
 		FieldName2: "yyy",
 	}
+
 	{{ if ne $.CurrentMethod.MethodType "Post" }}
 	SendTestValid{{$.CurrentMethod.ServiceMethod}}("Request XXX with valid infos", "parameter_value", request)
 	{{else}}
