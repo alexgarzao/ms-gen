@@ -53,10 +53,11 @@ func (t *{{$.CurrentMethod.TestType}}) test1() {
 		FieldName2: "yyy",
 	}
 
+	// Be sure about the expected status code bellow... Is 200?
 	{{ if ne $.CurrentMethod.MethodType "Post" }}
-	SendTestValid{{$.CurrentMethod.ServiceMethod}}("Request XXX with valid infos", "parameter_value", request)
+	SendTestValid{{$.CurrentMethod.ServiceMethod}}("Request XXX with valid infos", "parameter_value", request, 200)
 	{{else}}
-	SendTestValid{{$.CurrentMethod.ServiceMethod}}("Request XXX with valid infos", request)
+	SendTestValid{{$.CurrentMethod.ServiceMethod}}("Request XXX with valid infos", request, 200)
 	{{end}}
 }
 
@@ -66,9 +67,10 @@ func (T *{{$.CurrentMethod.TestType}}) test2() {
 		FieldName2: "yyy",
 	}
 
+	// Be sure about the expected status code bellow... Is 400?
 	{{ if ne $.CurrentMethod.MethodType "Post" }}
-	SendTestInvalid{{$.CurrentMethod.ServiceMethod}}("Request XXX with invalid infos", "parameter_value", request, "Expected message error")
+	SendTestInvalid{{$.CurrentMethod.ServiceMethod}}("Request XXX with invalid infos", "parameter_value", request, 400, "Expected message error")
 	{{else}}
-	SendTestInvalid{{$.CurrentMethod.ServiceMethod}}("Request XXX with invalid infos", request, "Expected message error")
+	SendTestInvalid{{$.CurrentMethod.ServiceMethod}}("Request XXX with invalid infos", request, 400, "Expected message error")
 	{{end}}
 }
