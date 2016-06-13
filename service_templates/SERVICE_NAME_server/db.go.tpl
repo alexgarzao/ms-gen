@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	_ "{{.CommonImportPath}}"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
