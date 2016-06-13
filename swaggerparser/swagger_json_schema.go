@@ -84,7 +84,7 @@ func (schema *JSONSchema) ToGolangType() string {
 		"integer|":         "int64",
 		"number|float":     "float32",
 		"number|double":    "float64",
-		"number|":          "float64",
+		"number|":          "int64",
 		"string|":          "string",
 		"string|byte":      "undefined",
 		"string|binary":    "undefined",
