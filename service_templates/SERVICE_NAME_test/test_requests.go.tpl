@@ -15,8 +15,8 @@ import (
 {{/* Build test functions for GET operations */}}
 {{ range $method := .Methods }}
 	{{ if eq $method.MethodType "Get" }}
-		func SendTestValid{{$method.ServiceMethod}}(testId string, parameter string, request interface{}, expectedStatusCode int) {
-			SendTestValidGetRequest(testId, "{{$method.Path}}", parameter, request, expectedStatusCode, nil)
+		func SendTestValid{{$method.ServiceMethod}}(testId string, parameter string, request interface{}, expectedStatusCode int, result interface{}) {
+			SendTestValidGetRequest(testId, "{{$method.Path}}", parameter, request, expectedStatusCode, result)
 		}
 		
 		func SendTestInvalid{{$method.ServiceMethod}}(testId string, parameter string, request interface{}, expectedStatusCode int, expectedErrorMessage string) {
@@ -28,8 +28,8 @@ import (
 {{/* Build test functions for PUT operations */}}
 {{ range $method := .Methods }}
 	{{ if eq $method.MethodType "Put" }}
-		func SendTestValid{{$method.ServiceMethod}}(testId string, parameter string, request interface{}, expectedStatusCode int) {
-			SendTestValidPutRequest(testId, "{{$method.Path}}", parameter, request, expectedStatusCode, nil)
+		func SendTestValid{{$method.ServiceMethod}}(testId string, parameter string, request interface{}, expectedStatusCode int, result interface{}) {
+			SendTestValidPutRequest(testId, "{{$method.Path}}", parameter, request, expectedStatusCode, result)
 		}
 		
 		func SendTestInvalid{{$method.ServiceMethod}}(testId string, parameter string, request interface{}, expectedStatusCode int, expectedErrorMessage string) {
@@ -41,8 +41,8 @@ import (
 {{/* Build test functions for POST operations */}}
 {{ range $method := .Methods }}
 	{{ if eq $method.MethodType "Post" }}
-		func SendTestValid{{$method.ServiceMethod}}(testId string, request interface{}, expectedStatusCode int) {
-			SendTestValidPostRequest(testId, "{{$method.Path}}", request, expectedStatusCode, nil)
+		func SendTestValid{{$method.ServiceMethod}}(testId string, request interface{}, expectedStatusCode int, result interface{}) {
+			SendTestValidPostRequest(testId, "{{$method.Path}}", request, expectedStatusCode, result)
 		}
 		
 		func SendTestInvalid{{$method.ServiceMethod}}(testId string, request interface{}, expectedStatusCode int, expectedErrorMessage string) {

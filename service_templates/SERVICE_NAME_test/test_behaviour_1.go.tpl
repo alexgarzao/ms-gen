@@ -55,9 +55,9 @@ func (t *{{$.CurrentMethod.TestType}}) test1() {
 
 	// Be sure about the expected status code bellow... Is 200?
 	{{ if ne $.CurrentMethod.MethodType "Post" }}
-	SendTestValid{{$.CurrentMethod.ServiceMethod}}("Request XXX with valid infos", "parameter_value", request, 200)
+	SendTestValid{{$.CurrentMethod.ServiceMethod}}("Request XXX with valid infos", "parameter_value", request, 200, nil)
 	{{else}}
-	SendTestValid{{$.CurrentMethod.ServiceMethod}}("Request XXX with valid infos", request, 200)
+	SendTestValid{{$.CurrentMethod.ServiceMethod}}("Request XXX with valid infos", request, 200, nil)
 	{{end}}
 }
 
