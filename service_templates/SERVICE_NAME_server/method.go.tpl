@@ -26,7 +26,7 @@ func (s *Service) {{.CurrentMethod.ServiceMethod}}(w rest.ResponseWriter, r *res
 		rest.Error(
 			w,
 			fmt.Sprintf("When decoding json: %s", err.Error()),
-			http.StatusInternalServerError,
+			http.StatusBadRequest,
 		)
 		return
 	}
