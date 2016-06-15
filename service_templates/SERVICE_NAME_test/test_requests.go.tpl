@@ -118,6 +118,10 @@ func SendTestValidPostRequest(testId string, uri string, request interface{}, ex
 
 func SendTestValidGetRequest(testId string, uri string, parameter string, request interface{}, expectedStatusCode int, serviceResult interface{}) {
 	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
+	
+	if parameter != "" {
+		parameter = "/" + parameter
+	}
 
 	f := frisby.Create(testId).
 		Get(MYSERVICE_URL + uri + parameter).
@@ -147,6 +151,10 @@ func SendTestValidGetRequest(testId string, uri string, parameter string, reques
 
 func SendTestInvalidPutRequest(testId string, uri string, parameter string, request interface{}, expectedStatusCode int, expectedErrorMessage string) {
 	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
+
+	if parameter != "" {
+		parameter = "/" + parameter
+	}
 
 	f := frisby.Create(testId).
 		Put(MYSERVICE_URL+uri+parameter).
@@ -192,6 +200,10 @@ func SendTestInvalidPostRequest(testId string, uri string, request interface{}, 
 
 func SendTestInvalidGetRequest(testId string, uri string, parameter string, request interface{}, expectedStatusCode int, expectedErrorMessage string) {
 	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
+
+	if parameter != "" {
+		parameter = "/" + parameter
+	}
 
 	f := frisby.Create(testId).
 		Get(MYSERVICE_URL + uri + parameter).
