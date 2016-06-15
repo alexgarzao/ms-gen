@@ -59,6 +59,10 @@ import (
 func SendTestValidPutRequest(testId string, uri string, parameter string, request interface{}, expectedStatusCode int, serviceResult interface{}) {
 	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
 
+	if parameter != "" {
+		parameter = "/" + parameter
+	}
+
 	f := frisby.Create(testId).
 		Put(MYSERVICE_URL + uri + parameter).
 		SetJson(request).
