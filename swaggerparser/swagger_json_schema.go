@@ -1,5 +1,9 @@
 package swaggerparser
 
+import (
+	"strings"
+)
+
 type (
 	// JSONSchema represents an instance of a JSON schema.
 	// See http://json-schema.org/documentation.html
@@ -78,6 +82,20 @@ type (
 //	password			string		password		Used to hint UIs the input needs to be obscured.
 //
 func (schema *JSONSchema) ToGolangType() string {
+	if schema.Ref != "" {
+		completeRef := schema.Ref // "#/definitions/GetMethod1Response"
+		return completeRef[strings.LastIndex(completeRef, "/")+1:]
+	}
+
+	if string(schema.Type) == "array" {
+		if schema.Items == nil {
+			return "arrayundefinedtype"
+		}
+
+		completeRef := schema.Items.Ref // "#/definitions/GetMethod1Response"
+		return "[]" + completeRef[strings.LastIndex(completeRef, "/")+1:]
+	}
+
 	goType := map[string]string{
 		"integer|int32":    "int32",
 		"integer|int64":    "int64",
@@ -99,7 +117,7 @@ func (schema *JSONSchema) ToGolangType() string {
 
 	result, ok := goType[swaggerType+"|"+swaggerFormat]
 	if ok == false {
-		result = "error"
+		result = "invalidgolangtype"
 	}
 
 	return result
