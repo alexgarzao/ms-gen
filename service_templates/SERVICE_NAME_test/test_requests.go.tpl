@@ -57,7 +57,7 @@ import (
 // Tools to send request using test system.
 //
 func SendTestValidPutRequest(testId string, uri string, parameter string, request interface{}, expectedStatusCode int, serviceResult interface{}) {
-	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
+	testId = "Test:" + common.GetFuncName(3) + ": " + testId + "."
 
 	if parameter != "" {
 		parameter = "/" + parameter
@@ -74,6 +74,11 @@ func SendTestValidPutRequest(testId string, uri string, parameter string, reques
 	}
 
 	f.ExpectStatus(expectedStatusCode)
+	
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
 
 	if serviceResult != nil {
 		f.AfterContent(func(F *frisby.Frisby, content []byte, inputErr error) {
@@ -91,7 +96,7 @@ func SendTestValidPutRequest(testId string, uri string, parameter string, reques
 }
 
 func SendTestValidPostRequest(testId string, uri string, request interface{}, expectedStatusCode int, serviceResult interface{}) {
-	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
+	testId = "Test:" + common.GetFuncName(3) + ": " + testId + "."
 
 	f := frisby.Create(testId).
 		Post(MYSERVICE_URL + uri).
@@ -104,6 +109,11 @@ func SendTestValidPostRequest(testId string, uri string, request interface{}, ex
 	}
 
 	f.ExpectStatus(expectedStatusCode)
+
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
 
 	if serviceResult != nil {
 		f.AfterContent(func(F *frisby.Frisby, content []byte, inputErr error) {
@@ -121,7 +131,7 @@ func SendTestValidPostRequest(testId string, uri string, request interface{}, ex
 }
 
 func SendTestValidGetRequest(testId string, uri string, parameter string, request interface{}, expectedStatusCode int, serviceResult interface{}) {
-	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
+	testId = "Test:" + common.GetFuncName(3) + ": " + testId + "."
 	
 	if parameter != "" {
 		parameter = "/" + parameter
@@ -137,6 +147,11 @@ func SendTestValidGetRequest(testId string, uri string, parameter string, reques
 	}
 
 	f.ExpectStatus(expectedStatusCode)
+
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
 
 	if serviceResult != nil {
 		f.AfterContent(func(F *frisby.Frisby, content []byte, inputErr error) {
@@ -154,7 +169,7 @@ func SendTestValidGetRequest(testId string, uri string, parameter string, reques
 }
 
 func SendTestInvalidPutRequest(testId string, uri string, parameter string, request interface{}, expectedStatusCode int, expectedErrorMessage string) {
-	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
+	testId = "Test:" + common.GetFuncName(3) + ": " + testId + "."
 
 	if parameter != "" {
 		parameter = "/" + parameter
@@ -170,9 +185,19 @@ func SendTestInvalidPutRequest(testId string, uri string, parameter string, requ
 		return
 	}
 
-	f.ExpectStatus(expectedStatusCode).
-		ExpectJson("Error", expectedErrorMessage).
+	f.ExpectStatus(expectedStatusCode)
+	
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
+
+	f.ExpectJson("Error", expectedErrorMessage).
 		AfterJson(func(F *frisby.Frisby, json *simplejson.Json, err error) {
+			if json.Get("Error") == nil {
+				F.AddError("Error message not found")
+				return
+			}
 			errorMessage, _ := json.Get("Error").String()
 			if errorMessage != expectedErrorMessage {
 				F.AddError(fmt.Sprintf("Value of error [%s] differs from expected [%s]", errorMessage, expectedErrorMessage))
@@ -181,7 +206,7 @@ func SendTestInvalidPutRequest(testId string, uri string, parameter string, requ
 }
 
 func SendTestInvalidPostRequest(testId string, uri string, request interface{}, expectedStatusCode int, expectedErrorMessage string) {
-	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
+	testId = "Test:" + common.GetFuncName(3) + ": " + testId + "."
 
 	f := frisby.Create(testId).
 		Post(MYSERVICE_URL + uri).
@@ -193,17 +218,27 @@ func SendTestInvalidPostRequest(testId string, uri string, request interface{}, 
 		return
 	}
 
-	f.ExpectStatus(expectedStatusCode).
-		AfterJson(func(F *frisby.Frisby, json *simplejson.Json, err error) {
-			errorMessage, _ := json.Get("Error").String()
-			if errorMessage != expectedErrorMessage {
-				F.AddError(fmt.Sprintf("Value of error [%s] differs from expected [%s]", errorMessage, expectedErrorMessage))
-			}
-		})
+	f.ExpectStatus(expectedStatusCode)
+
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
+
+	f.AfterJson(func(F *frisby.Frisby, json *simplejson.Json, err error) {
+		if json.Get("Error") == nil {
+			F.AddError("Error message not found")
+			return
+		}
+		errorMessage, _ := json.Get("Error").String()
+		if errorMessage != expectedErrorMessage {
+			F.AddError(fmt.Sprintf("Value of error [%s] differs from expected [%s]", errorMessage, expectedErrorMessage))
+		}
+	})
 }
 
 func SendTestInvalidGetRequest(testId string, uri string, parameter string, request interface{}, expectedStatusCode int, expectedErrorMessage string) {
-	testId = "Test:" + common.GetFuncName(3)[4:] + ": " + testId + "."
+	testId = "Test:" + common.GetFuncName(3) + ": " + testId + "."
 
 	if parameter != "" {
 		parameter = "/" + parameter
@@ -218,11 +253,21 @@ func SendTestInvalidGetRequest(testId string, uri string, parameter string, requ
 		return
 	}
 
-	f.ExpectStatus(expectedStatusCode).
-		AfterJson(func(F *frisby.Frisby, json *simplejson.Json, err error) {
-			errorMessage, _ := json.Get("Error").String()
-			if errorMessage != expectedErrorMessage {
-				F.AddError(fmt.Sprintf("Value of error [%s] differs from expected [%s]", errorMessage, expectedErrorMessage))
-			}
-		})
+	f.ExpectStatus(expectedStatusCode)
+
+	if f.Error() != nil {
+		f.AddError(fmt.Sprintf("%s", f.Error()))
+		return
+	}
+
+	f.AfterJson(func(F *frisby.Frisby, json *simplejson.Json, err error) {
+		if json.Get("Error") == nil {
+			F.AddError("Error message not found")
+			return
+		}
+		errorMessage, _ := json.Get("Error").String()
+		if errorMessage != expectedErrorMessage {
+			F.AddError(fmt.Sprintf("Value of error [%s] differs from expected [%s]", errorMessage, expectedErrorMessage))
+		}
+	})
 }
