@@ -57,8 +57,12 @@ run: build_server
 	./bin/${SERVER_EXECUTABLE}
 
 
-onlyrun:
+onlyrun_server:
 	go run ${GOSERVERFILES}
+
+
+onlyrun_bdd:
+	go run ${GOTESTFILES}
 
 
 test:
